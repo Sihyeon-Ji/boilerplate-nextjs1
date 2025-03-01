@@ -55,14 +55,32 @@ export function TabsDemo() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="grid gap-6">
-							<div className="grid gap-3">
-								<Label htmlFor="tabs-demo-current">Current password</Label>
-								<Input id="tabs-demo-current" type="password" />
-							</div>
-							<div className="grid gap-3">
-								<Label htmlFor="tabs-demo-new">New password</Label>
-								<Input id="tabs-demo-new" type="password" />
-							</div>
+							{/* type="password" form 없이 써서 나는 warning 임시처리*/}
+							<form>
+								<input
+									type="hidden"
+									name="username"
+									id="username"
+									autoComplete="username"
+									value="알려진_사용자_이름"
+								/>
+								<div className="grid gap-3">
+									<Label htmlFor="tabs-demo-current">Current password</Label>
+									<Input
+										id="tabs-demo-current"
+										type="password"
+										autoComplete="current-password"
+									/>
+								</div>
+								<div className="grid gap-3">
+									<Label htmlFor="tabs-demo-new">New password</Label>
+									<Input
+										id="tabs-demo-new"
+										type="password"
+										autoComplete="new-password"
+									/>
+								</div>
+							</form>
 						</CardContent>
 						<CardFooter>
 							<Button>Save password</Button>

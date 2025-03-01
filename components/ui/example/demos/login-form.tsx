@@ -32,6 +32,7 @@ export function LoginForm({
 									type="email"
 									placeholder="m@example.com"
 									required
+									autoComplete="email"
 								/>
 							</div>
 							<div className="grid gap-3">
@@ -44,7 +45,12 @@ export function LoginForm({
 										Forgot your password?
 									</a>
 								</div>
-								<Input id="password" type="password" required />
+								<Input
+									id="password"
+									type="password"
+									required
+									autoComplete="current-password"
+								/>
 							</div>
 							<Button type="submit" className="w-full">
 								Login

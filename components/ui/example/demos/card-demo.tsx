@@ -35,6 +35,7 @@ export function CardDemo() {
 									type="email"
 									placeholder="m@example.com"
 									required
+									autoComplete="email"
 								/>
 							</div>
 							<div className="grid gap-2">
@@ -47,7 +48,12 @@ export function CardDemo() {
 										Forgot your password?
 									</a>
 								</div>
-								<Input id="password" type="password" required />
+								<Input
+									id="password"
+									type="password"
+									required
+									autoComplete="current-password"
+								/>
 							</div>
 						</div>
 					</CardContent>
@@ -116,7 +122,7 @@ export function CardDemo() {
 					<Image
 						src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
 						alt="Photo by Drew Beamer"
-						className="aspect-video object-cover"
+						className="aspect-video w-auto object-cover"
 						width={500}
 						height={500}
 					/>

@@ -10,6 +10,7 @@ export function AspectRatioDemo() {
 					src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
 					alt="Photo by Drew Beamer"
 					fill
+					sizes="(max-width: 768px) 100vw, 33vw"
 					className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
 				/>
 			</AspectRatio>
@@ -18,6 +19,7 @@ export function AspectRatioDemo() {
 					src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
 					alt="Photo by Drew Beamer"
 					fill
+					sizes="(max-width: 768px) 100vw, 33vw"
 					className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
 				/>
 			</AspectRatio>
