@@ -5,6 +5,7 @@ import { Analytics } from "@/components/ui/analytics";
 import { ThemeProvider } from "@/app/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { StoreProvider } from "@/app/providers";
+import ModalProvider from "@/app/providers/ModalProvider";
 import "@/app/styles/globals.css";
 
 const META_THEME_COLORS = {
@@ -124,9 +125,11 @@ export default function RootLayout({ children }: Props) {
 						enableSystem
 						disableTransitionOnChange
 					>
-						{children}
-						<Toaster />
-						<Analytics />
+						<ModalProvider>
+							{children}
+							<Toaster />
+							<Analytics />
+						</ModalProvider>
 					</ThemeProvider>
 				</StoreProvider>
 			</body>

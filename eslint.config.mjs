@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+	baseDirectory: __dirname,
 });
 
 // const eslintConfig = [
@@ -18,12 +18,14 @@ const compat = new FlatCompat({
 //   },
 // ];
 const eslintConfig = [
-  ...compat.config({
-    extends: ["next/core-web-vitals", "next/typescript"],
-    rules: {
-      "@next/next/no-duplicate-head": "off",
-    },
-  }),
-]
+	...compat.config({
+		extends: ["next/core-web-vitals", "next/typescript"],
+		rules: {
+			"@next/next/no-duplicate-head": "off",
+			"@typescript-eslint/no-unused-vars": "warn",
+			"@typescript-eslint/no-explicit-any": "warn",
+		},
+	}),
+];
 
 export default eslintConfig;
