@@ -1,5 +1,5 @@
-import { Counter } from "@/components/counter/Counter";
-import { Nav } from "@/components/navigation/Nav";
+import { Counter } from "@/components/example/counter/Counter";
+import { Nav } from "@/components/example/navigation/Nav";
 import { AccordionDemo } from "@/components/ui/example/demos/accordion-demo";
 import { AlertDemo } from "@/components/ui/example/demos/alert-demo";
 import { AlertDialogDemo } from "@/components/ui/example/demos/alert-dialog-demo";

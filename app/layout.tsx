@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@/components/ui/analytics";
-import { ThemeProvider } from "@/app/providers";
+import { ThemeProvider } from "@/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { StoreProvider } from "@/app/providers";
-import ModalProvider from "@/app/providers/ModalProvider";
+import { StoreProvider } from "@/providers";
+import ModalProvider from "@/providers/ModalProvider";
 import "@/app/styles/globals.css";
 
 const META_THEME_COLORS = {
