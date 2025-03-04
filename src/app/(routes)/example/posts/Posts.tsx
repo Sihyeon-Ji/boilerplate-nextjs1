@@ -1,12 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getPosts } from "@/app/api/post/post";
+import { getPostList } from "@/app/api/post/post";
 
 export default function Posts() {
 	const { data, error, isLoading, isError } = useQuery({
 		queryKey: ["posts"],
-		queryFn: getPosts,
+		queryFn: getPostList,
 	});
 
 	if (isLoading) return <p> Loading...</p>;
@@ -19,7 +19,7 @@ export default function Posts() {
 			<ul>
 				{data?.map((post) => (
 					<div key={post.id}>
-						<h4> Title: {post.title}</h4> <p> Body: {post.body}</p>{" "}
+						<h4> Title: {post.title}</h4> <p> Body: {post.body}</p>
 					</div>
 				))}
 			</ul>

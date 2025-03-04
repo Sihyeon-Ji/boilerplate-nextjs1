@@ -1,12 +1,55 @@
-import { QueryClient, isServer } from "@tanstack/react-query";
+import { QueryCache, QueryClient, isServer } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+
+// QueryClient:
+// 비즈니스 로직 에러 처리
+// UI에 표시할 에러 메시지 가공
+// 캐시/상태 관리 관련 처리
 
 function makeQueryClient() {
 	return new QueryClient({
 		defaultOptions: {
 			queries: {
-				staleTime: 60 * 1000,
+				staleTime: 1 * 60 * 1000, // 1 min
+				gcTime: 15 * 60 * 1000, // 15 mins
+				retry: (failureCount, error) => {
+					if (error instanceof AxiosError) {
+						//NOTE - 401 (Unauthorized)
+						return error.response?.status == 401 && failureCount == 0;
+					}
+					return false;
+				},
+				refetchOnWindowFocus: false,
+				refetchOnMount: false,
+				throwOnError: false,
+			},
+			mutations: {
+				retry: (failureCount, error) => {
+					if (error instanceof AxiosError) {
+						//NOTE - 401 (Unauthorized)
+						return error.response?.status == 401 && failureCount == 0;
+					}
+					return false;
+				},
+				throwOnError: false,
+				onError: (error) => {
+					if (error instanceof AxiosError) {
+						console.log("===========queryClient level error===========");
+						console.log("error : ", error);
+						console.log("===========queryClient level error===========");
+					}
+				},
 			},
 		},
+		queryCache: new QueryCache({
+			onError: (error) => {
+				if (error instanceof AxiosError) {
+					console.log("===========queryClient level error===========");
+					console.log("error : ", error);
+					console.log("===========queryClient level error===========");
+				}
+			},
+		}),
 	});
 }
 

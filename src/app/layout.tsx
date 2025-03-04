@@ -1,4 +1,4 @@
-import { StartReactScan } from "@/lib/config/StartReactScan";
+import { StartReactScan } from "@/lib/config/startReactScanasdf";
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { cn } from "@/lib/utils/utils";
@@ -8,7 +8,7 @@ import "@/app/styles/globals.css";
 import "dayjs/locale/ko";
 import { StoreProvider } from "@/app/providers/StoreProvider";
 import { ThemeProvider } from "@/app/providers/ThemeProvider";
-import CustomQueryClientProvider from "@/app/providers/CustomQueryClientProvider";
+import QueryProvider from "@/app/providers/QueryProvider";
 import ModalProvider from "@/app/providers/ModalProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -123,7 +123,7 @@ export default function RootLayout({ children }: Props) {
 				)}
 			>
 				<StoreProvider>
-					<CustomQueryClientProvider>
+					<QueryProvider>
 						<ThemeProvider
 							attribute="class"
 							defaultTheme="system"
@@ -138,7 +138,7 @@ export default function RootLayout({ children }: Props) {
 							</ModalProvider>
 						</ThemeProvider>
 						<ReactQueryDevtools initialIsOpen={false} />
-					</CustomQueryClientProvider>
+					</QueryProvider>
 				</StoreProvider>
 			</body>
 		</html>

@@ -1,10 +1,4 @@
-// export async function getPosts() {
-// 	await new Promise((resolve) => setTimeout(resolve, 1000));
-// 	return [
-// 		{ id: 1, title: "Post 1" },
-// 		{ id: 2, title: "Post 2" },
-// 	];
-// }
+import { axiosInstance } from "@/lib/config/getAxiosInstance";
 
 type Post = {
 	userId: number;
@@ -12,7 +6,23 @@ type Post = {
 	title: string;
 	body: string;
 };
+
+// NOTE - nextjs fetch 사용
 export async function getPosts(): Promise<Post[]> {
+	console.log(
+		`getPosts 요청 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const response = await fetch("https://jsonplaceholder.typicode.com/posts");
 	return response.json();
 }
+
+// NOTE - axios 사용
+export const getPostList = async () => {
+	console.log(
+		`getPostList 요청 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
+	const response = await axiosInstance.get<Post[]>(
+		"https://jsonplaceholder.typicode.com/posts",
+	);
+	return response.data;
+};
