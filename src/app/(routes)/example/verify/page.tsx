@@ -1,4 +1,4 @@
-import { Counter } from "@/components/example/counter/Counter";
+import { Counter } from "@/components/features/example-counter/Counter";
 import Link from "next/link";
 
 export default function VerifyPage() {

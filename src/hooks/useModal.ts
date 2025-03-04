@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { ModalContext } from "@/providers/ModalProvider";
+import { ModalContext } from "@/app/providers/ModalProvider";
 
 // 모달 상태 관리를 위한 훅
 export function useModal() {

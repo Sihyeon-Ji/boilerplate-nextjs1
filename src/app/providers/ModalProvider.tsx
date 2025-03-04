@@ -1,6 +1,7 @@
 "use client";
+
 import { createContext, useState, ReactNode } from "react";
-import Modal from "@/components/modal/Modal";
+import Modal from "@/components/ui/Modal";
 
 // 모달 컨텍스트 타입
 type ModalContextType = {

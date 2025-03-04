@@ -1,4 +1,4 @@
-import { Quotes } from "@/components/example/quotes/Quotes";
+import { Quotes } from "@/components/features/example-quotes/Quotes";
 import Link from "next/link";
 
 export default function QuotesPage() {

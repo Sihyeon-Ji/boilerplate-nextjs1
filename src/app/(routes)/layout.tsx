@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-
 import { AppSidebar } from "@/components/ui/example/demos/app-sidebar";
 import { ModeSwitcher } from "@/components/ui/example/demos/mode-switcher";
 import { NavHeader } from "@/components/ui/example/demos/nav-header";
