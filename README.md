@@ -204,3 +204,378 @@ src/app/
 /admin             -> 관리자 메인 페이지
 /admin/users       -> 관리자 사용자 관리 페이지
 ```
+
+## Next.js 라우트 핸들러 (Route Handlers)
+
+### 라우트 핸들러란?
+
+라우트 핸들러는 Next.js에서 API 엔드포인트를 만들 수 있는 기능입니다. 웹 표준인 Request 및 Response API를 사용하여 특정 라우트에 대한 사용자 정의 요청 핸들러를 생성할 수 있습니다.
+
+> 💡 라우트 핸들러는 App Router 내에서만 작동합니다. 이는 Pages Router의 API Routes를 대체하는 기능입니다..
+
+### 기본 사용법
+
+라우트 핸들러는 app 디렉토리 내에서 **route.js|ts** 파일에 정의됩니다. 하지만 page.js|ts 파일과 동일한 경로에는 사용할 수 없습니다.
+
+```typescript
+// app/api/route.ts
+export async function GET() {
+	return Response.json({ message: "안녕하세요!" });
+}
+```
+
+라우트 핸들러는 다음과 같은 HTTP 메서드를 지원합니다:
+
+- GET
+- POST
+- PUT
+- PATCH
+- DELETE
+- HEAD
+- OPTIONS
+
+```typescript
+// app/api/route.ts
+export async function GET() {
+	return new Response("GET 요청 처리");
+}
+
+export async function POST() {
+	return new Response("POST 요청 처리");
+}
+```
+
+또한, NextRequest와 NextResponse를 통해 확장된 기능을 사용할 수도 있습니다.
+
+```typescript
+// app/api/route.ts
+import { NextResponse } from "next/server";
+
+export async function GET() {
+	return NextResponse.json({ message: "안녕하세요!" });
+}
+```
+
+### 🔄 캐싱 및 재검증
+
+기본적으로 Response 객체를 반환하는 라우트 핸들러는 캐시됩니다. 이를 제어하는 방법은 아래와 같이 여러 가지가 있습니다.
+
+#### 캐시 활성화하기
+
+```typescript
+// app/items/route.ts
+export const dynamic = "force-static";
+
+export async function GET() {
+	const res = await fetch("https://data.mongodb-api.com/...", {
+		headers: {
+			"Content-Type": "application/json",
+			"API-Key": process.env.DATA_API_KEY,
+		},
+	});
+	const data = await res.json();
+
+	return Response.json({ data });
+}
+```
+
+#### 재검증 시간 설정하기
+
+```typescript
+// app/api/route.ts
+export const revalidate = 60; // 60초마다 재검증
+
+export async function GET() {
+	const data = await fetch("https://api.vercel.app/blog");
+	const posts = await data.json();
+
+	return Response.json(posts);
+}
+```
+
+### 🍪 쿠키 처리하기
+
+쿠키를 읽거나 설정하려면 next/headers에서 제공하는 cookies 함수를 사용할 수 있습니다.
+
+```typescript
+// app/api/route.ts
+import { cookies } from "next/headers";
+
+export async function GET(request: Request) {
+	const cookieStore = await cookies();
+	const token = cookieStore.get("token");
+
+	return new Response("안녕하세요!", {
+		status: 200,
+		headers: { "Set-Cookie": `token=${token.value}` },
+	});
+}
+```
+
+또는 NextRequest API를 사용할 수도 있습니다.
+
+```typescript
+// app/api/route.ts
+import { type NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
+	const token = request.cookies.get("token");
+	// 쿠키 활용하기
+}
+```
+
+### 📋 헤더 처리하기
+
+헤더를 읽기 위해 next/headers에서 제공하는 headers 함수를 사용할 수 있습니다.
+
+```typescript
+// app/api/route.ts
+import { headers } from "next/headers";
+
+export async function GET(request: Request) {
+	const headersList = await headers();
+	const referer = headersList.get("referer");
+
+	return new Response("안녕하세요!", {
+		status: 200,
+		headers: { referer: referer },
+	});
+}
+```
+
+NextRequest를 사용한 방법:
+
+```typescript
+// app/api/route.ts
+import { type NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
+	const requestHeaders = new Headers(request.headers);
+	// 헤더 활용하기
+}
+```
+
+### 🔄 리다이렉트
+
+next/navigation의 redirect 함수를 사용하여 다른 URL로 리다이렉트할 수 있어습니다.
+
+```typescript
+// app/api/route.ts
+import { redirect } from "next/navigation";
+
+export async function GET(request: Request) {
+	redirect("https://nextjs.org/");
+}
+```
+
+### 🔄 동적 라우트 세그먼트
+
+동적 데이터를 기반으로 요청 핸들러를 생성하기 위해 동적 세그먼트를 사용할 수 있습니다.
+
+```typescript
+// app/items/[slug]/route.ts
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ slug: string }> },
+) {
+	const { slug } = await params; // 'a', 'b', 또는 'c' 등
+	return Response.json({ slug });
+}
+```
+
+| 라우트                    | 예시 URL | params                 |
+| ------------------------- | -------- | ---------------------- |
+| app/items/[slug]/route.js | /items/a | Promise<{ slug: 'a' }> |
+| app/items/[slug]/route.js | /items/b | Promise<{ slug: 'b' }> |
+| app/items/[slug]/route.js | /items/c | Promise<{ slug: 'c' }> |
+
+### 🔍 URL 쿼리 파라미터
+
+NextRequest 인스턴스를 사용하면 쿼리 파라미터를 쉽게 처리할 수 있습니다.
+
+```typescript
+// app/api/search/route.ts
+import { type NextRequest } from "next/server";
+
+export function GET(request: NextRequest) {
+	const searchParams = request.nextUrl.searchParams;
+	const query = searchParams.get("query");
+	// query는 /api/search?query=hello에서 "hello"
+
+	return Response.json({ query });
+}
+```
+
+### 🌊 스트리밍
+
+```typescript
+// app/api/chat/route.ts
+import { openai } from "@ai-sdk/openai";
+import { StreamingTextResponse, streamText } from "ai";
+
+export async function POST(req: Request) {
+	const { messages } = await req.json();
+	const result = await streamText({
+		model: openai("gpt-4-turbo"),
+		messages,
+	});
+
+	return new StreamingTextResponse(result.toAIStream());
+}
+```
+
+또는 웹 API를 직접 사용할 수도 있습니다.
+
+```typescript
+// app/api/route.ts
+// 비동기 이터레이터를 스트림으로 변환
+function iteratorToStream(iterator: any) {
+	return new ReadableStream({
+		async pull(controller) {
+			const { value, done } = await iterator.next();
+
+			if (done) {
+				controller.close();
+			} else {
+				controller.enqueue(value);
+			}
+		},
+	});
+}
+
+function sleep(time: number) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, time);
+	});
+}
+
+const encoder = new TextEncoder();
+
+async function* makeIterator() {
+	yield encoder.encode("<p>첫번째</p>");
+	await sleep(200);
+	yield encoder.encode("<p>두번째</p>");
+	await sleep(200);
+	yield encoder.encode("<p>세번째</p>");
+}
+
+export async function GET() {
+	const iterator = makeIterator();
+	const stream = iteratorToStream(iterator);
+
+	return new Response(stream);
+}
+```
+
+### 📝 요청 본문 처리하기
+
+표준 웹 API 메서드를 사용하여 요청 본문을 읽을 수 있습니다.
+
+```typescript
+// app/items/route.ts
+export async function POST(request: Request) {
+	const res = await request.json();
+	return Response.json({ res });
+}
+```
+
+#### FormData 처리하기
+
+request.formData() 함수를 사용하여 FormData를 처리할 수 있습니다.
+
+```typescript
+// app/items/route.ts
+export async function POST(request: Request) {
+	const formData = await request.formData();
+	const name = formData.get("name");
+	const email = formData.get("email");
+	return Response.json({ name, email });
+}
+```
+
+> 💡 FormData의 모든 데이터는 문자열이므로, 다른 형식(예: 숫자)으로 데이터를 가져오려면 zod-form-data 같은 라이브러리를 사용하는 것이 좋습니다...
+
+### 🌐 CORS 설정하기
+
+특정 라우트 핸들러에 CORS 헤더를 설정할 수 있습니다.......
+
+```typescript
+// app/api/route.ts
+export async function GET(request: Request) {
+	return new Response("안녕하세요!", {
+		status: 200,
+		headers: {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+		},
+	});
+}
+```
+
+> 참고: 여러 라우트 핸들러에 CORS 헤더를 추가하려면 미들웨어나 next.config.js 파일을 사용할 수 있습니다....
+
+### 🪝 웹훅 처리하기
+
+서드파티 서비스의 웹훅을 받기 위해 라우트 핸들러를 사용할 수 있습니다...
+
+```typescript
+// app/api/route.ts
+export async function POST(request: Request) {
+	try {
+		const text = await request.text();
+		// 웹훅 페이로드 처리하기
+	} catch (error) {
+		return new Response(`웹훅 오류: ${error.message}`, {
+			status: 400,
+		});
+	}
+
+	return new Response("성공!", {
+		status: 200,
+	});
+}
+```
+
+Pages Router의 API Routes와 달리 추가 설정 없이 바로 사용 가능합니다.
+
+### 📄 UI가 아닌 응답
+
+UI가 아닌 콘텐츠를 반환하기 위해 라우트 핸들러를 사용할 수 있습니다. (sitemap.xml, robots.txt, 앱 아이콘, 오픈 그래프 이미지는 모두 기본 지원)
+
+```typescript
+// app/rss.xml/route.ts
+export async function GET() {
+	return new Response(
+		`<?xml version="1.0" encoding="UTF-8" ?>
+		<rss version="2.0">
+			<channel>
+				<title>Next.js 문서</title>
+				<link>https://nextjs.org/docs</link>
+				<description>웹을 위한 React 프레임워크</description>
+			</channel>
+		</rss>`,
+		{
+			headers: {
+				"Content-Type": "text/xml",
+			},
+		},
+	);
+}
+```
+
+### ⚙️ 세그먼트 설정 옵션
+
+라우트 핸들러는 페이지와 레이아웃과 동일한 라우트 세그먼트 설정을 사용합니다
+
+```typescript
+// app/items/route.ts
+export const dynamic = "auto";
+export const dynamicParams = true;
+export const revalidate = false;
+export const fetchCache = "auto";
+export const runtime = "nodejs";
+export const preferredRegion = "auto";
+```
+
+자세한 내용은 [API 참조](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#api-reference)를 확인해 주세요..
