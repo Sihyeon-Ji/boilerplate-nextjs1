@@ -1,5 +1,4 @@
 import { Counter } from "@/components/features/example-counter/Counter";
-import { Nav } from "@/components/features/example-navigation/Nav";
 import { AccordionDemo } from "@/components/ui/example/demos/accordion-demo";
 import { AlertDemo } from "@/components/ui/example/demos/alert-demo";
 import { AlertDialogDemo } from "@/components/ui/example/demos/alert-dialog-demo";
@@ -52,10 +51,6 @@ import { TooltipDemo } from "@/components/ui/example/demos/tooltip-demo";
 export default function SinkPage() {
 	return (
 		<div className="grid flex-1 gap-4 p-4">
-			<Nav />
-			<main>
-				<Counter />
-			</main>
 			<ComponentWrapper name="chart" className="w-full">
 				<ChartDemo />
 			</ComponentWrapper>

@@ -1,4 +1,4 @@
-import { getPostList } from "@/app/api/post/post";
+import { getPosts } from "@/app/api/post/route";
 import { getQueryClient } from "@/lib/config/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import Posts from "./Posts";
@@ -8,7 +8,7 @@ export default async function PostsPage() {
 
 	await queryClient.prefetchQuery({
 		queryKey: ["posts"],
-		queryFn: getPostList,
+		queryFn: getPosts,
 	});
 
 	return (

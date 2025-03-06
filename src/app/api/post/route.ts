@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/config/getAxiosInstance";
+import serverAPI from "@/lib/config/axiosServerInstance";
 
 type Post = {
 	userId: number;
@@ -21,7 +21,7 @@ export const getPostList = async () => {
 	console.log(
 		`getPostList 요청 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
-	const response = await axiosInstance.get<Post[]>(
+	const response = await serverAPI.get<Post[]>(
 		"https://jsonplaceholder.typicode.com/posts",
 	);
 	return response.data;

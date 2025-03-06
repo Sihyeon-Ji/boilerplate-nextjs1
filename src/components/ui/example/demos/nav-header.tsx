@@ -22,23 +22,51 @@ export function NavHeader() {
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
-					<NavigationMenuLink asChild data-active={pathname === "/charts"}>
-						<Link href="/charts">Charts</Link>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/counter"}
+					>
+						<Link href="/example/counter">Redux 예제</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
-					<NavigationMenuLink asChild data-active={pathname === "/forms"}>
-						<Link href="/forms">Forms</Link>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/verify"}
+					>
+						<Link href="/example/verify">Redux 예제 검증</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
-					<NavigationMenuLink asChild data-active={pathname === "/login"}>
-						<Link href="/login">Login</Link>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/quotes"}
+					>
+						<Link href="/example/quotes">Redux 활용 예제</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
-					<NavigationMenuLink asChild data-active={pathname === "/sandbox"}>
-						<Link href="/sandbox">Sandbox</Link>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/modal"}
+					>
+						<Link href="/example/modal">Modal 예제</Link>
+					</NavigationMenuLink>
+				</NavigationMenuItem>
+				<NavigationMenuItem>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/posts"}
+					>
+						<Link href="/example/posts">Posts 예제 tanstack query</Link>
+					</NavigationMenuLink>
+				</NavigationMenuItem>
+				<NavigationMenuItem>
+					<NavigationMenuLink
+						asChild
+						data-active={pathname === "/example/users"}
+					>
+						<Link href="/example/users">Users 예제 tanstack query</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 			</NavigationMenuList>

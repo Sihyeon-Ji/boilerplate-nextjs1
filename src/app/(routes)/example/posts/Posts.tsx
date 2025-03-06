@@ -1,13 +1,18 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getPostList } from "@/app/api/post/post";
+import { useApiGet } from "@/hooks/useApi";
 
 export default function Posts() {
-	const { data, error, isLoading, isError } = useQuery({
-		queryKey: ["posts"],
-		queryFn: getPostList,
-	});
+	// const { data, error, isLoading, isError } = useQuery({
+	// 	queryKey: ["posts"],
+	// 	queryFn: getPosts,
+	// });
+	type Post = {
+		id: number;
+		title: string;
+		body: string;
+	};
+	const { data, isLoading, error, isError } = useApiGet<Post[]>("posts");
 
 	if (isLoading) return <p> Loading...</p>;
 

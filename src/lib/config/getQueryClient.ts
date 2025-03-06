@@ -6,6 +6,8 @@ import { AxiosError } from "axios";
 // UI에 표시할 에러 메시지 가공
 // 캐시/상태 관리 관련 처리
 
+// NOTE - QueryClient 설정
+// 앱 전반에서 QueryClient를 직접 사용하지 않고 이 함수를 통해 생성하는 것을 권장함
 function makeQueryClient() {
 	return new QueryClient({
 		defaultOptions: {
