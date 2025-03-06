@@ -21,7 +21,7 @@ interface QuotesApiResponse {
 // baseURL과 예상되는 엔드포인트를 사용하여 API 서비스를 정의합니다
 export const quotesApiSlice = createApi({
 	// baseURL과 예상되는 엔드포인트를 사용하여 API 서비스를 정의합니다
-	// baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/quotes" }), // client side에서 직접 호출해버리는 예시
+	// baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/quotes" }), // client side에서 직접 호출하는 예시
 	// 아래는 Nextjs 서버를 이용한 프록시 아키텍처 예시
 	// 이는 app/api/quotes/route.ts 라우트 핸들러로 전송됨
 	//LINK - ../../../app/api/quotes/route.ts:3

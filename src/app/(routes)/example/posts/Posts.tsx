@@ -1,18 +1,20 @@
 "use client";
 
-import { useApiGet } from "@/hooks/useApi";
+import { useQuery } from "@tanstack/react-query";
+import { GET as getPosts } from "@/app/api/post/route";
 
+type Post = {
+	id: number;
+	title: string;
+	body: string;
+};
+
+//NOTE - Axios, Tanstack Query, route handler를 이용하여 prefetch 구현한 예제
 export default function Posts() {
-	// const { data, error, isLoading, isError } = useQuery({
-	// 	queryKey: ["posts"],
-	// 	queryFn: getPosts,
-	// });
-	type Post = {
-		id: number;
-		title: string;
-		body: string;
-	};
-	const { data, isLoading, error, isError } = useApiGet<Post[]>("posts");
+	const { data, error, isLoading, isError } = useQuery<Post[]>({
+		queryKey: ["posts"],
+		queryFn: getPosts,
+	});
 
 	if (isLoading) return <p> Loading...</p>;
 

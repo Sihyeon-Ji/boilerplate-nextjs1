@@ -1,6 +1,7 @@
 "use client";
 
-import { useApiGetById } from "@/hooks/useApi";
+import { useQuery } from "@tanstack/react-query";
+import clientAPI from "@/lib/config/axiosClientInstance";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -15,17 +16,24 @@ export default function UserDetailPage() {
 		phone: string;
 	};
 
-	const { data: user, isLoading, error } = useApiGetById<User>("users", userId);
+	const {
+		data: user,
+		isLoading,
+		error,
+	} = useQuery<User>({
+		queryKey: ["users", userId],
+		queryFn: () => clientAPI.get(`users/${userId}`).then((res) => res.data),
+	});
 
 	if (isLoading) return <div>사용자 정보를 불러오는 중...</div>;
-	if (error) return <div>오류: {error.message}</div>;
+	if (error) return <div>오류: {(error as Error).message}</div>;
 	if (!user) return <div>사용자를 찾을 수 없습니다.</div>;
 
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="mb-4 text-2xl font-bold">사용자 상세 정보</h1>
 
-			<div className="rounded bg-white p-6 shadow">
+			<div className="rounded p-6 shadow">
 				<div className="mb-4">
 					<label className="font-bold">이름:</label>
 					<p>{user.name}</p>
@@ -42,11 +50,8 @@ export default function UserDetailPage() {
 				</div>
 
 				<div className="mt-6 flex gap-2">
-					<Link href="/users" className="btn">
+					<Link href="/example/users" className="btn">
 						목록으로
-					</Link>
-					<Link href={`/users/${userId}/edit`} className="btn btn-secondary">
-						수정하기
 					</Link>
 				</div>
 			</div>

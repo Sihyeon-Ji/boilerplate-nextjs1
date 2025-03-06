@@ -1,21 +1,27 @@
 "use client";
 
-import { useApiPost } from "@/hooks/useApi";
+import { useMutation } from "@tanstack/react-query";
+import clientAPI from "@/lib/config/axiosClientInstance";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getQueryClient } from "@/lib/config/getQueryClient";
 
 export default function CreateUserPage() {
 	const router = useRouter();
+	const queryClient = getQueryClient();
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
 		phone: "",
 	});
 
-	const createUserMutation = useApiPost("users", {
+	const createUserMutation = useMutation({
+		mutationFn: (userData: typeof formData) =>
+			clientAPI.post("users", userData),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["users"] });
 			alert("사용자가 생성되었습니다.");
-			router.push("/users");
+			router.push("/example/users");
 		},
 	});
 
@@ -33,7 +39,7 @@ export default function CreateUserPage() {
 		<div className="container mx-auto p-4">
 			<h1 className="mb-4 text-2xl font-bold">사용자 추가</h1>
 
-			<form onSubmit={handleSubmit} className="rounded bg-white p-6 shadow">
+			<form onSubmit={handleSubmit} className="rounded p-6 shadow">
 				<div className="mb-4">
 					<label className="mb-2 block">이름</label>
 					<input

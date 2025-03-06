@@ -7,22 +7,18 @@ type Post = {
 	body: string;
 };
 
-// NOTE - nextjs fetch 사용
-export async function getPosts(): Promise<Post[]> {
+export async function GET() {
 	console.log(
-		`getPosts 요청 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+		`post 요청이 어디에서 일어났을까용? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
-	const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-	return response.json();
-}
 
-// NOTE - axios 사용
-export const getPostList = async () => {
-	console.log(
-		`getPostList 요청 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
-	);
+	// NOTE - nextjs fetch 사용
+	// const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+	// return response.json();
+
+	// NOTE - axios 사용
 	const response = await serverAPI.get<Post[]>(
 		"https://jsonplaceholder.typicode.com/posts",
 	);
 	return response.data;
-};
+}
