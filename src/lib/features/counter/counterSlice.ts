@@ -2,6 +2,7 @@ import { createAppSlice } from "@/lib/config/createAppSlice";
 import type { AppThunk } from "@/lib/config/store";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { fetchCount } from "./counterAPI";
+// import { REHYDRATE } from "redux-persist";
 
 export interface CounterSliceState {
 	value: number;
@@ -65,6 +66,13 @@ export const counterSlice = createAppSlice({
 			},
 		),
 	}),
+	// REHYDRATE 액션을 처리하기 위한 extraReducers 추가
+	// extraReducers: (builder) => {
+	// 	builder.addCase(REHYDRATE, (state) => {
+	// 		// REHYDRATE 후에 status를 idle로 유지
+	// 		state.status = "idle";
+	// 	});
+	// },
 	// 여기에서 선택자(selectors)를 정의할 수 있습니다.
 	// 이 선택자들은 첫 번째 인자로 슬라이스 상태를 받습니다.
 	// 컴포넌트에서 상태를 쉽게 접근할 수 있게 해줍니다.
