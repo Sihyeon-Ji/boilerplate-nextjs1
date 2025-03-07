@@ -4,16 +4,18 @@ import { deleteUser, getUserById } from "../data";
 // GET /api/users/:id - 특정 사용자 상세 정보 조회
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	console.log(
 		`GET /api/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	try {
-		const id = parseInt(params.id);
+		// params를 await로 처리
+		const { id } = await params;
+		const userId = parseInt(id);
 
 		// ID로 사용자 찾기
-		const user = getUserById(id);
+		const user = getUserById(userId);
 
 		if (!user) {
 			return NextResponse.json(
@@ -34,14 +36,17 @@ export async function GET(
 // DELETE /api/users/:id - 특정 사용자 삭제
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	console.log(
 		`DELETE /api/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	try {
-		const id = parseInt(params.id);
-		const deletedUser = deleteUser(id);
+		// params를 await로 처리
+		const { id } = await params;
+		const userId = parseInt(id);
+
+		const deletedUser = deleteUser(userId);
 
 		if (!deletedUser) {
 			return NextResponse.json(
