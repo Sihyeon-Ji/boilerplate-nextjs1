@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { deleteUser, getUserById } from "../data";
 
 // GET /api/users/:id - 특정 사용자 상세 정보 조회
 export async function GET(
-	request: Request,
+	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) {
 	console.log(
@@ -33,7 +33,7 @@ export async function GET(
 
 // DELETE /api/users/:id - 특정 사용자 삭제
 export async function DELETE(
-	request: Request,
+	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) {
 	console.log(

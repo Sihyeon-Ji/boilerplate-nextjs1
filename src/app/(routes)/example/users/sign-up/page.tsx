@@ -19,7 +19,10 @@ export default function CreateUserPage() {
 		mutationFn: (userData: typeof formData) =>
 			clientAPI.post("users", userData),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["users"] });
+			queryClient.invalidateQueries({
+				queryKey: ["users"],
+				refetchType: "all", // Next.js의 클라이언트 컴포넌트에서 페이지 이동 시 React Query의 캐시 상태가 제대로 전파되지 않는 거 같아서 refetchType을 "all"로 설정
+			});
 			alert("사용자가 생성되었습니다.");
 			router.push("/example/users");
 		},
