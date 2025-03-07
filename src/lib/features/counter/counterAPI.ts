@@ -21,10 +21,8 @@ export const fetchCount = async (amount = 1) => {
 	// 아래처럼 호출 시 /api/counter가 되고
 	// 이는 app/api/counter/route.ts 라우트 핸들러로 전송됨
 	//LINK - ../../../app/api/counter/route.ts:9
-	const response: { data: number } = await clientAPI.post("counter", {
-		amount,
-	});
-	return response;
+	const response = await clientAPI.post("counter", { amount });
+	return response.data;
 };
 
 // NOTE - counter 과정 설명

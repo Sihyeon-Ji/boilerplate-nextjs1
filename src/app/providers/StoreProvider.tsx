@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { type Persistor, persistStore } from "redux-persist";
 
 interface Props {
 	readonly children: ReactNode;
@@ -14,10 +15,12 @@ interface Props {
 
 export const StoreProvider = ({ children }: Props) => {
 	const storeRef = useRef<AppStore | null>(null);
+	const persistorRef = useRef<Persistor>({} as Persistor);
 
 	if (!storeRef.current) {
 		//NOTE - 이 컴포넌트가 처음 렌더링될 때 스토어 인스턴스를 생성합니다
 		storeRef.current = makeStore();
+		persistorRef.current = persistStore(storeRef.current);
 	}
 
 	useEffect(() => {
@@ -32,7 +35,7 @@ export const StoreProvider = ({ children }: Props) => {
 
 	return (
 		<Provider store={storeRef.current}>
-			<PersistGate loading={null} persistor={storeRef.current.persistor}>
+			<PersistGate loading={null} persistor={persistorRef.current}>
 				{children}
 			</PersistGate>
 		</Provider>
