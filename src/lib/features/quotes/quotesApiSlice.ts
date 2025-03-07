@@ -22,10 +22,10 @@ interface QuotesApiResponse {
 export const quotesApiSlice = createApi({
 	// baseURL과 예상되는 엔드포인트를 사용하여 API 서비스를 정의합니다
 	// baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/quotes" }), // client side에서 직접 호출하는 예시
-	// 아래는 Nextjs 서버를 이용한 프록시 아키텍처 예시
-	// 이는 app/api/quotes/route.ts 라우트 핸들러로 전송됨
-	//LINK - ../../../app/api/quotes/route.ts:3
-	baseQuery: fetchBaseQuery({ baseUrl: "/api/quotes" }),
+	// 아래는 axios 없이 Nextjs 서버를 이용한 프록시 아키텍처 예시
+	// 이는 /app/api/example/quotes/route.ts 라우트 핸들러로 전송됨
+	//LINK - ../../../app/api/example/quotes/route.ts:3
+	baseQuery: fetchBaseQuery({ baseUrl: "/api/example/quotes" }),
 	// 리듀서 경로 - 이 API의 리듀서가 Redux 스토어에 저장될 위치를 지정합니다
 	// 고유 이름이어야 하며, 다른 API 서비스와 충돌하지 않아야 합니다
 	reducerPath: "quotesApi",

@@ -2,12 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import clientAPI from "@/lib/config/axiosClientInstance";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
 export default function UserDetailPage() {
 	const params = useParams();
-	const router = useRouter();
 	const userId = params.id as string | number;
 
 	type User = {
@@ -22,7 +21,16 @@ export default function UserDetailPage() {
 		error,
 	} = useQuery<User>({
 		queryKey: ["users", userId],
-		queryFn: () => clientAPI.get(`users/${userId}`).then((res) => res.data),
+		// queryFn: () => clientAPI.get(`/example/users/${userId}`).then((res) => res.data),
+		// 위처럼 사용하면 되는데 아래는 단지 이 쿼리가 client에서 잘 요청되는지 확인해보기 위함
+		queryFn: async () => {
+			console.log(
+				"쿼리 함수 실행 환경:",
+				typeof window === "undefined" ? "서버" : "클라이언트",
+			);
+			const { data } = await clientAPI.get(`/example/users/${userId}`);
+			return data;
+		},
 	});
 
 	if (isLoading) return <div>사용자 정보를 불러오는 중...</div>;

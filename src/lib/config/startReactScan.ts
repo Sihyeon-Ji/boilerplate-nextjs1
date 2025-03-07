@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 // NOTE - react-scan 설정
 // react-scan 라이브러리가 클라이언트 환경에서만 실행되기에
-// nextjs에서 클라이언트 컴포넌트에서만 실행되도록 하는 설정
+// Next.js에서 클라이언트 컴포넌트에서만 실행되도록 하는 설정
 export function StartReactScan() {
 	useEffect(() => {
 		const initScan = async () => {

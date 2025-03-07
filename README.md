@@ -587,6 +587,12 @@ Next.js 프레임워크를 사용하여 프로젝트를 만들면서...
 Next.js 서버 영역은 백엔드 프록시 역할을 수행할 수 있도록 구성하고자 하였습니다.
 아래는 해당 내용(백엔드 프록시 아키텍처)에 대한 예시입니다.
 
+```mermaid
+flowchart LR
+    A["외부 백엔드 서버"] <-->|Axios| B["Next.js 서버(프록시서버)"]
+    B <-->|Axios, Tanstack-query, redux thunk| C["Client Side"]
+```
+
 ### 핵심 장점
 
 이 아키텍처의 주요 이점은 다음과 같습니다

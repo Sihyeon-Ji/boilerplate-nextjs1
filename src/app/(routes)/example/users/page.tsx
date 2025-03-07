@@ -7,6 +7,9 @@ import { useState } from "react";
 import { getQueryClient } from "@/lib/config/getQueryClient";
 
 export default function UsersPage() {
+	console.log(
+		`users 페이지 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const queryClient = getQueryClient();
 
@@ -22,12 +25,21 @@ export default function UsersPage() {
 		error,
 	} = useQuery<User[]>({
 		queryKey: ["users"],
-		queryFn: () => clientAPI.get("users").then((res) => res.data),
+		// queryFn: () => clientAPI.get("/example/users").then((res) => res.data),
+		// 위처럼 사용하면 되는데 아래는 단지 이 쿼리가 client에서 잘 요청되는지 확인해보기 위함
+		queryFn: async () => {
+			console.log(
+				"쿼리 함수 실행 환경:",
+				typeof window === "undefined" ? "서버" : "클라이언트",
+			);
+			const { data } = await clientAPI.get("/example/users");
+			return data;
+		},
 	});
 
 	const deleteUserMutation = useMutation({
 		mutationFn: (id: number) =>
-			clientAPI.delete(`users/${id}`).then((res) => res.data),
+			clientAPI.delete(`/example/users/${id}`).then((res) => res.data),
 		onMutate: () => setIsDeleting(true),
 		onSettled: () => setIsDeleting(false),
 		onSuccess: () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { GET as getPosts } from "@/app/api/post/route";
+import { GET as getPostsHandler } from "@/app/api/example/post/route";
 
 type Post = {
 	id: number;
@@ -11,6 +11,17 @@ type Post = {
 
 //NOTE - Axios, Tanstack Query, route handler를 이용하여 prefetch 구현한 예제
 export default function Posts() {
+	// 1. 먼저 route.ts에서 prefetch할 함수 자체를 가져옵니다.
+	// 2. 해당 함수가 return 타입을 Promise<Something[]> 이런 식으로 바로 내보내면 상관 없지만
+	//    현재는 NextResponse.json(data);로 통일하고 있어서 -> Promise<NextResponse<any>> 요런 타입이 넘어올 겁니다.
+	// 3. 그래서 useQuery의 queryFn에 Promise<Something[]> 형식의 타입을 전달해주기 위해 아래처럼 래퍼 함수를 활용합니다.
+	const getPosts = async () => {
+		const response = await getPostsHandler();
+		const data = await response.json();
+		return data; // Post[] 배열 반환
+	};
+	// 4. 기존에 사용하던 대로 useQuery를 사용합니다.
+	// 5. 주의할 점은 queryKey와 queryFn에 들어가는 내용이 상단 prefetch 설정을 한 부분과 동일해야 하는 것입니다.
 	const { data, error, isLoading, isError } = useQuery<Post[]>({
 		queryKey: ["posts"],
 		queryFn: getPosts,

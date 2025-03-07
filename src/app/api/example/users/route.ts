@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { User, createUser, getUsers } from "./data";
+import { User, createUser, getUsers } from "@/app/constants/data";
 
-// GET /api/users - 모든 사용자 목록 조회
+//NOTE - GET /api/example/users - 모든 사용자 목록 조회
 export async function GET() {
 	console.log(
-		`GET /api/users 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+		`GET /api/example/users 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	const users = getUsers();
 	return NextResponse.json(users);
 }
 
-// POST /api/users - 새 사용자 생성
+//NOTE - POST /api/example/users - 새 사용자 생성
 export async function POST(request: Request) {
 	console.log(
-		`POST /api/users 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+		`POST /api/example/users 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	try {
 		const userData = await request.json();

@@ -18,10 +18,9 @@ export const fetchCount = async (amount = 1) => {
 
 	//NOTE - client side axios 호출 방식
 	// client side axios instance의 baseURL은 "/api"이기 때문에
-	// 아래처럼 호출 시 /api/counter가 되고
-	// 이는 app/api/counter/route.ts 라우트 핸들러로 전송됨
-	//LINK - ../../../app/api/counter/route.ts:9
-	const response = await clientAPI.post("counter", { amount });
+	// 아래처럼 호출 시 /api/example/counter가 되고 => 이는 /app/api/example/counter/route.ts 라우트 핸들러로 전송됨
+	//LINK - ../../../app/api/example/counter/route.ts:9
+	const response = await clientAPI.post("/example/counter", { amount });
 	return response.data;
 };
 

@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteUser, getUserById } from "../data";
+import { deleteUser, getUserById } from "@/app/constants/data";
 
-// GET /api/users/:id - 특정 사용자 상세 정보 조회
+//NOTE - GET /api/example/users/:id - 특정 사용자 상세 정보 조회
 export async function GET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	console.log(
-		`GET /api/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+		`GET /api/example/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	try {
 		// params를 await로 처리
@@ -33,19 +33,20 @@ export async function GET(
 	}
 }
 
-// DELETE /api/users/:id - 특정 사용자 삭제
+//NOTE - DELETE /api/example/users/:id - 특정 사용자 삭제
 export async function DELETE(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	console.log(
-		`DELETE /api/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+		`DELETE /api/example/users/:id 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
 	try {
 		// params를 await로 처리
 		const { id } = await params;
 		const userId = parseInt(id);
 
+		// id로 사용자 삭제
 		const deletedUser = deleteUser(userId);
 
 		if (!deletedUser) {

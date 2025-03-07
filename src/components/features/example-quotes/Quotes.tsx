@@ -7,7 +7,7 @@ const options = [5, 10, 20, 30];
 
 export const Quotes = () => {
 	const [numberOfQuotes, setNumberOfQuotes] = useState(10);
-	//NOTE - 쿼리 훅을 사용하면 자동으로 데이터를 가져오고 쿼리 값을 반환합니다
+	//NOTE - tanstack query처럼 RTK의 쿼리 훅을 사용하면 자동으로 데이터를 가져오고 쿼리 값을 반환합니다
 	const { data, isError, isLoading, isSuccess } =
 		useGetQuotesQuery(numberOfQuotes);
 

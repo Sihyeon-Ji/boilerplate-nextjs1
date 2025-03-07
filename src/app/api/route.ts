@@ -2,67 +2,59 @@ import { NextRequest, NextResponse } from "next/server";
 import serverAPI from "@/lib/config/axiosServerInstance";
 import { AxiosError } from "axios";
 
-//ANCHOR - 공통 API 라우트 핸들러
-// useApi custom hook -> axiosClientInstance에 의해 client 사이드에서 보내는 요청은
-// 이 라우트를 통해 처리됩니다.
+//ANCHOR - BaseUrl API 라우트 핸들러
+// client에서 BaseUrl로 요청하면 이 라우트 핸들러로 전송됩니다.
 
+//NOTE - GET /api - BaseUrl 테스트
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { path: string[] } },
+	{ params }: { params: Promise<{ [key: string]: unknown }> },
 ) {
-	const path = params.path.join("/");
-	const searchParams = request.nextUrl.searchParams.toString();
-	const queryString = searchParams ? `?${searchParams}` : "";
+	console.log("GET /api");
+	console.log("request : ", request);
+	console.log("params : ", await params);
+	console.log("GET /api");
 
 	try {
-		const response = await serverAPI.get(`/${path}${queryString}`);
-		return NextResponse.json(response.data);
+		// const response = await serverAPI.get<unknown>(`/health-check`);
+		return NextResponse.json("GET /api 임시응답 값");
 	} catch (error) {
-		console.error("===========공통 Route Handler level error===========");
-		console.error(`GET /${path} 요청 오류:`, error);
-		console.error("===========공통 Route Handler level error===========");
-
-		if (error instanceof AxiosError && error.response) {
+		if (error instanceof AxiosError) {
 			return NextResponse.json(
-				{ error: error.response.data?.message || "서버 오류" },
-				{ status: error.response.status },
+				{ error: error.message || "서버 오류" },
+				{ status: error.response?.status },
+			);
+		} else {
+			return NextResponse.json(
+				{ error: "서버 연결 오류가 발생했습니다." },
+				{ status: 500 },
 			);
 		}
-		return NextResponse.json(
-			{ error: "서버 연결 오류가 발생했습니다." },
-			{ status: 500 },
-		);
 	}
 }
 
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: { path: string[] } },
-) {
-	const path = params.path.join("/");
-	console.log("===========POST route===========");
+//NOTE - POST /api - BaseUrl 테스트
+export async function POST(request: NextRequest) {
+	console.log("POST /api");
 	console.log("request : ", request);
-	console.log("===========POST route===========");
+	console.log("body : ", await request.json());
+	console.log("POST /api");
 
 	try {
-		const body = await request.json();
-		const response = await serverAPI.post(`/${path}`, body);
-		return NextResponse.json(response.data);
+		// const response = await serverAPI.post<unknown>(`/post-test`);
+		return NextResponse.json("POST /api 임시응답 값");
 	} catch (error) {
-		console.error("===========공통 Route Handler level error===========");
-		console.error(`POST /${path} 요청 오류:`, error);
-		console.error("===========공통 Route Handler level error===========");
-
-		if (error instanceof AxiosError && error.response) {
+		if (error instanceof AxiosError) {
 			return NextResponse.json(
-				{ error: error.response.data?.message || "서버 오류" },
-				{ status: error.response.status },
+				{ error: error.message || "서버 오류" },
+				{ status: error.response?.status },
+			);
+		} else {
+			return NextResponse.json(
+				{ error: "서버 연결 오류가 발생했습니다." },
+				{ status: 500 },
 			);
 		}
-		return NextResponse.json(
-			{ error: "서버 연결 오류가 발생했습니다." },
-			{ status: 500 },
-		);
 	}
 }
 

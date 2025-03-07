@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import {
 	decrement,
 	increment,
@@ -11,11 +10,14 @@ import {
 	selectCount,
 	selectStatus,
 } from "@/lib/features/counter/counterSlice";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxStore";
 import styles from "./Counter.module.css";
 
 export const Counter = () => {
+	console.log(
+		`Counter 컴포넌트 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
+
 	const dispatch = useAppDispatch();
 	const count = useAppSelector(selectCount);
 	const status = useAppSelector(selectStatus);

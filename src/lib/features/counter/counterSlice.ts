@@ -40,7 +40,7 @@ export const counterSlice = createAppSlice({
 		),
 		// 아래 함수는 thunk라고 불리며 비동기 로직을 수행할 수 있게 해줍니다.
 		// 일반 액션처럼 dispatch할 수 있습니다 => dispatch(incrementAsync(10))
-		// 이는 첫 번째 인자로 dispatch 함수와 함께 thunk를 호출합니다.
+		// 첫 번째 인자로 dispatch 함수와 함께 thunk를 호출합니다.
 		// 그 후 비동기 코드를 실행하고 다른 액션을 dispatch할 수 있습니다.
 		// thunk는 일반적으로 비동기 요청을 수행하는 데 사용됩니다.
 		incrementAsync: create.asyncThunk(

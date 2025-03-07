@@ -1,3 +1,6 @@
+//NOTE - user example을 위한 임시 파일
+//LINK - ../(routes)/example/users/page.tsx
+
 // 메모리에 사용자 데이터 저장을 위한 간단한 저장소
 export interface User {
 	id: number;

@@ -27,7 +27,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 // 리덕스 상태를 로컬 스토리지에 저장하여 페이지를 새로고침해도 상태가 유지됩니다
 const persistConfig = {
 	key: "root", // 저장소의 루트 키
-	storage, // 기본적으로 localStorage를 사용합니다
+	storage, // 기본적으로 localStorage를 사용합니다, 서버 환경을 고려하여 ssrSafeStorage 유틸 사용
 	blacklist: ["quotesApi"], // 제외할 리듀서 (API 캐시는 보통 제외)
 };
 // 루트 리듀서를 persist로 감싸서 상태를 영속화합니다
