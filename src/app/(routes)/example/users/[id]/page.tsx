@@ -6,6 +6,9 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 
 export default function UserDetailPage() {
+	console.log(
+		`user detail 페이지 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const params = useParams();
 	const userId = params.id as string | number;
 

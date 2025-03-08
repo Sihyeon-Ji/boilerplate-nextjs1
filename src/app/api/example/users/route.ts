@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { User, createUser, getUsers } from "@/app/constants/data";
+import { createUser, getUsers } from "@/app/constants/data";
+import { handleApiError } from "@/lib/utils/errorHandler";
 
 //NOTE - GET /api/example/users - 모든 사용자 목록 조회
 export async function GET() {
@@ -28,9 +29,8 @@ export async function POST(request: Request) {
 		const newUser = createUser(userData);
 		return NextResponse.json(newUser, { status: 201 });
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "사용자 생성 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "사용자 생성 오류",
+		});
 	}
 }

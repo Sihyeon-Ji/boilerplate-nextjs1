@@ -42,7 +42,7 @@ export function NavHeader() {
 						asChild
 						data-active={pathname === "/example/quotes"}
 					>
-						<Link href="/example/quotes">Redux 활용 예제</Link>
+						<Link href="/example/quotes">Redux rtk query 예제</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
@@ -56,17 +56,19 @@ export function NavHeader() {
 				<NavigationMenuItem>
 					<NavigationMenuLink
 						asChild
-						data-active={pathname === "/example/posts"}
+						data-active={pathname === "/example/users"}
 					>
-						<Link href="/example/posts">Posts 예제 tanstack query</Link>
+						<Link href="/example/users">
+							axios + tanstack query + route handler 예제
+						</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
 					<NavigationMenuLink
 						asChild
-						data-active={pathname === "/example/users"}
+						data-active={pathname === "/example/posts"}
 					>
-						<Link href="/example/users">Users 예제 tanstack query</Link>
+						<Link href="/example/posts">prefetch 예제</Link>
 					</NavigationMenuLink>
 				</NavigationMenuItem>
 			</NavigationMenuList>

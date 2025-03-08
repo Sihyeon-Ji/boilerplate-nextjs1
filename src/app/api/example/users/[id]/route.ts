@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteUser, getUserById } from "@/app/constants/data";
+import { handleApiError } from "@/lib/utils/errorHandler";
 
 //NOTE - GET /api/example/users/:id - 특정 사용자 상세 정보 조회
 export async function GET(
@@ -26,10 +27,9 @@ export async function GET(
 
 		return NextResponse.json(user);
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "사용자 조회 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "사용자 조회 중 오류가 발생했습니다.",
+		});
 	}
 }
 
@@ -58,9 +58,8 @@ export async function DELETE(
 
 		return NextResponse.json({ message: "사용자가 삭제되었습니다." });
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "사용자 삭제 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "사용자 삭제 중 오류가 발생했습니다.",
+		});
 	}
 }

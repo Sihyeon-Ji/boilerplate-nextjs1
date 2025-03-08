@@ -1,7 +1,8 @@
 import serverAPI from "@/lib/config/axiosServerInstance";
+import { handleApiError } from "@/lib/utils/errorHandler";
 import { NextResponse } from "next/server";
 
-//NOTE - GET /api/example/post - post 예시 조회하기
+//NOTE - GET /api/example/post - post 조회 예시
 export async function GET() {
 	console.log(
 		`GET /api/example/post 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
@@ -19,9 +20,8 @@ export async function GET() {
 
 		return NextResponse.json(data);
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "데이터 조회 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "데이터 조회 중 오류가 발생했습니다.",
+		});
 	}
 }

@@ -14,6 +14,9 @@ export default async function AppLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	console.log(
+		`app layout 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const cookieStore = await cookies();
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 

@@ -1,6 +1,7 @@
+import { handleApiError } from "@/lib/utils/errorHandler";
 import { NextRequest, NextResponse } from "next/server";
 
-//NOTE - GET /api/example/quotes - 인용구 예시 조회하기
+//NOTE - GET /api/example/quotes - redux rtk query 인용구 조회 예시
 export async function GET(request: NextRequest) {
 	console.log(
 		`GET /api/example/quotes 가 어디서 실행되었을까요? : ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
@@ -22,9 +23,8 @@ export async function GET(request: NextRequest) {
 
 		return NextResponse.json(data);
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "데이터 조회 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "데이터 조회 중 오류가 발생했습니다.",
+		});
 	}
 }

@@ -7,6 +7,9 @@ import { useState } from "react";
 import { getQueryClient } from "@/lib/config/getQueryClient";
 
 export default function CreateUserPage() {
+	console.log(
+		`user sign up 페이지 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const router = useRouter();
 	const queryClient = getQueryClient();
 	const [formData, setFormData] = useState({

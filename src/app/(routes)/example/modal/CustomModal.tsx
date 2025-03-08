@@ -10,6 +10,9 @@ interface CustomModalProps {
 }
 
 export default function CustomModal({ closeModal }: CustomModalProps) {
+	console.log(
+		`custom modal 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 

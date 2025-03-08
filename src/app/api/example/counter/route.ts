@@ -1,3 +1,4 @@
+import { handleApiError } from "@/lib/utils/errorHandler";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -15,9 +16,8 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json({ data: amount });
 	} catch (error) {
-		return NextResponse.json(
-			{ error: "ADD 하다가 에러 발생함." },
-			{ status: 500 },
-		);
+		return handleApiError(error, {
+			errorMessage: "비동기 ADD 하다가 에러 발생함;;;",
+		});
 	}
 }

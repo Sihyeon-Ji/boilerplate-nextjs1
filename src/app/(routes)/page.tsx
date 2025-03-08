@@ -48,7 +48,10 @@ import { ToggleDemo } from "@/components/ui/example/demos/toggle-demo";
 import { ToggleGroupDemo } from "@/components/ui/example/demos/toggle-group-demo";
 import { TooltipDemo } from "@/components/ui/example/demos/tooltip-demo";
 
-export default function SinkPage() {
+export default function MainPage() {
+	console.log(
+		`main 페이지 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	return (
 		<div className="grid flex-1 gap-4 p-4">
 			<ComponentWrapper name="chart" className="w-full">

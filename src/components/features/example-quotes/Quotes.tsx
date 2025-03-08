@@ -6,6 +6,9 @@ import styles from "./Quotes.module.css";
 const options = [5, 10, 20, 30];
 
 export const Quotes = () => {
+	console.log(
+		`quotes 컴포넌트 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	const [numberOfQuotes, setNumberOfQuotes] = useState(10);
 	//NOTE - tanstack query처럼 RTK의 쿼리 훅을 사용하면 자동으로 데이터를 가져오고 쿼리 값을 반환합니다
 	const { data, isError, isLoading, isSuccess } =

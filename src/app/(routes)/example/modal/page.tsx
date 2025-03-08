@@ -7,6 +7,9 @@ import FormModal from "./FormModal";
 import CustomModal from "./CustomModal";
 
 export default function ModalPage() {
+	console.log(
+		`modal 페이지 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
+	);
 	// useModal 훅 사용
 	const { openModal, closeModal } = useModal();
 
