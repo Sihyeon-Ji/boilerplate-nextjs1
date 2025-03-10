@@ -24,6 +24,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { setCookie } from "@/hooks/useCookie";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -82,8 +83,14 @@ function SidebarProvider({
 				_setOpen(openState);
 			}
 
-			// This sets the cookie to keep the sidebar state.
-			document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+			// const encryptedOpenState = encrypt(openState.toString());
+
+			// // This sets the cookie to keep the sidebar state.
+			// document.cookie = `${SIDEBAR_COOKIE_NAME}=${encryptedOpenState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+			setCookie(SIDEBAR_COOKIE_NAME, openState.toString(), {
+				path: "/",
+				maxAge: SIDEBAR_COOKIE_MAX_AGE,
+			});
 		},
 		[setOpenProp, open],
 	);

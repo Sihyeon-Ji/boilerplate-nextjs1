@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import serverAPI from "@/lib/config/axiosServerInstance";
-import { cookies } from "next/headers";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import { setCookie } from "@/hooks/useCookie";
 
 //NOTE - POST /api/example/auth/sign-in - 로그인 예시 처리
 export async function POST(request: NextRequest) {
@@ -13,8 +13,14 @@ export async function POST(request: NextRequest) {
 		const response = await serverAPI.post("/auth/login", body);
 
 		// 토큰을 쿠키에 저장
-		const cookieStore = await cookies();
-		cookieStore.set("auth-token", response.data.token, {
+		// const cookieStore = await cookies();
+		// cookieStore.set("auth-token", response.data.token, {
+		// 	httpOnly: true,
+		// 	secure: process.env.NODE_ENV === "production",
+		// 	maxAge: 60 * 60 * 24 * 7, // 1주일
+		// 	path: "/",
+		// });
+		await setCookie("auth-token", response.data.token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			maxAge: 60 * 60 * 24 * 7, // 1주일

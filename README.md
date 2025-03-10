@@ -1592,3 +1592,161 @@ project-root/
 │   └── favicon.ico
 └── middleware.ts     # Next.js 미들웨어 (인증 체크 등)
 ```
+
+## 스토리지 관련 유틸리티 훅
+
+### 쿠키 (Cookies)
+
+/hooks/useCookie.ts
+쿠키는 클라이언트와 서버 간에 데이터를 공유할 수 있는 작은 텍스트 파일입니다. 이 프로젝트는 쿠키를 안전하게 다루기 위한 암호화된 유틸리티 함수를 제공합니다.
+
+#### 특징
+
+- 서버 컴포넌트와 클라이언트 컴포넌트 모두에서 사용 가능
+- 자동 암호화/복호화 처리
+- 다양한 쿠키 옵션 지원 (만료, 도메인, 경로 등)
+
+#### 주요 함수
+
+```typescript
+// 쿠키 값 가져오기
+await getCookie(name: string): Promise<string | undefined>
+
+// 모든 쿠키 가져오기
+await getAllCookies(): Promise<{ name: string; value: string }[]>
+
+// 쿠키 존재 여부 확인
+await checkCookie(name: string): Promise<boolean>
+
+// 쿠키 설정하기
+await setCookie(name: string, value: string, options?: CookieOptions): Promise<void>
+
+// 쿠키 삭제하기
+await deleteCookie(name: string): Promise<void>
+```
+
+### 로컬 스토리지 (LocalStorage)
+
+/hooks/useLocalStorage.ts
+로컬 스토리지는 브라우저에 데이터를 영구적으로 저장할 수 있는 웹 스토리지 메커니즘입니다. 브라우저를 닫고 다시 열어도 데이터가 유지됩니다.
+
+#### 특징
+
+- 클라이언트 사이드 전용
+- 암호화 기반 데이터 보안
+- 간편한 API
+
+#### 주요 함수
+
+```typescript
+// 항목 가져오기
+getLocalStorageItem(key: string): string | undefined
+
+// 모든 항목 가져오기
+getLocalStorageAllItems(): { key: string; value: string }[]
+
+// 항목 설정하기
+setLocalStorageItem(key: string, value: string): void
+
+// 항목 존재 여부 확인
+checkLocalStorageItem(key: string): boolean
+
+// 항목 삭제하기
+deleteLocalStorageItem(key: string): void
+```
+
+### 세션 스토리지 (SessionStorage)
+
+/hooks/useSessionStorage.ts
+세션 스토리지는 브라우저 세션 동안만 데이터를 저장하는 웹 스토리지 메커니즘입니다. 브라우저 탭이나 창을 닫으면 데이터가 삭제됩니다
+
+#### 특징
+
+- 클라이언트 사이드 전용
+- 세션(탭)이 종료되면 데이터 삭제
+- 로컬 스토리지와 동일한 API 패턴
+
+#### 주요 함수
+
+```typescript
+// 항목 가져오기
+getSessionStorageItem(key: string): string | undefined
+
+// 모든 항목 가져오기
+getSessionStorageAllItems(): { key: string; value: string }[]
+
+// 항목 설정하기
+setSessionStorageItem(key: string, value: string): void
+
+// 항목 존재 여부 확인
+checkSessionStorageItem(key: string): boolean
+
+// 항목 삭제하기
+deleteSessionStorageItem(key: string): void
+```
+
+### Redux 지속성
+
+설정 경로: /lib/config/store.ts의 persistConfig 참고
+
+#### 특징
+
+- redux devtools는 운영환경에서 비활성화 됨
+- redux-persist에 의해서 브라우저 로컬 스토리지(혹은 세션 스토리지)에 redux 상태가 저장되는데 이 역시 암호화/복호화 처리를 하였음
+
+### 사용 예시
+
+#### 쿠키 사용 예시
+
+```typescript
+import { setCookie, getCookie, deleteCookie } from "@/hooks/useCookie";
+
+// 쿠키 설정
+await setCookie("username", "홍길동", { maxAge: 3600, path: "/" });
+
+// 쿠키 가져오기
+const username = await getCookie("username");
+console.log(username); // '홍길동'
+
+// 쿠키 삭제
+await deleteCookie("username");
+```
+
+#### 로컬 스토리지 사용 예시
+
+```typescript
+import {
+	setLocalStorageItem,
+	getLocalStorageItem,
+} from "@/hooks/useLocalStorage";
+
+// 로컬 스토리지에 데이터 저장
+setLocalStorageItem(
+	"user-preferences",
+	JSON.stringify({ theme: "dark", fontSize: 16 }),
+);
+
+// 로컬 스토리지에서 데이터 가져오기
+const preferencesStr = getLocalStorageItem("user-preferences");
+const preferences = preferencesStr ? JSON.parse(preferencesStr) : null;
+console.log(preferences); // { theme: 'dark', fontSize: 16 }
+```
+
+#### 세션 스토리지 사용 예시
+
+```typescript
+import {
+	setSessionStorageItem,
+	getSessionStorageItem,
+} from "@/hooks/useSessionStorage";
+
+// 세션 스토리지에 데이터 저장
+setSessionStorageItem("current-search", "검색어");
+
+// 세션 스토리지에서 데이터 가져오기
+const searchTerm = getSessionStorageItem("current-search");
+console.log(searchTerm); // '검색어'
+```
+
+모든 스토리지 관련 유틸리티는 보안을 강화하기 위해 암호화를 사용합니다. 민감한 데이터를 저장할 때 이러한 유틸리티를 사용하면 일반 텍스트 노출 위험을 줄일 수 있습니다.
+더 자세한 사용 예시는 /app/(routes)/example/storage/page.tsx를 참조하세요.

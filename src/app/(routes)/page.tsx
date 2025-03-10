@@ -1,4 +1,3 @@
-import { Counter } from "@/components/features/example-counter/Counter";
 import { AccordionDemo } from "@/components/ui/example/demos/accordion-demo";
 import { AlertDemo } from "@/components/ui/example/demos/alert-demo";
 import { AlertDialogDemo } from "@/components/ui/example/demos/alert-dialog-demo";

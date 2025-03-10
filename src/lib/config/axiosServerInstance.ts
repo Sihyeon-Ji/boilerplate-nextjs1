@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { getCookie } from "@/hooks/useCookie";
 
 //NOTE - Next.js 서버에서 외부 백엔드 서비스로 요청하기 위한 Axios 인스턴스
 const serverAPI = axios.create({
@@ -13,11 +14,15 @@ const serverAPI = axios.create({
 // 모든 API 요청에 인증 토큰을 함께 전달하기, 요청 인터셉터로 쿠키의 토큰을 헤더에 추가
 serverAPI.interceptors.request.use(async (config) => {
 	if (typeof window === "undefined") {
-		const { cookies } = await import("next/headers");
-		const cookieStore = await cookies();
-		const token = cookieStore.get("auth-token");
+		// const { cookies } = await import("next/headers");
+		// const cookieStore = await cookies();
+		// const token = cookieStore.get("auth-token");
+		// if (token) {
+		// 	config.headers["Authorization"] = `Bearer ${token.value}`;
+		// }
+		const token = await getCookie("auth-token");
 		if (token) {
-			config.headers["Authorization"] = `Bearer ${token.value}`;
+			config.headers["Authorization"] = `Bearer ${token}`;
 		}
 	}
 	return config;

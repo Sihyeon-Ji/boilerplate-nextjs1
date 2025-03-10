@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/ui/example/demos/app-sidebar";
 import { ModeSwitcher } from "@/components/ui/example/demos/mode-switcher";
 import { NavHeader } from "@/components/ui/example/demos/nav-header";
@@ -8,6 +7,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getCookie } from "@/hooks/useCookie";
 
 export default async function AppLayout({
 	children,
@@ -17,8 +17,7 @@ export default async function AppLayout({
 	console.log(
 		`app layout 렌더링 환경: ${typeof window === "undefined" ? "서버" : "클라이언트"}`,
 	);
-	const cookieStore = await cookies();
-	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+	const defaultOpen = (await getCookie("sidebar_state")) === "true";
 
 	return (
 		<SidebarProvider defaultOpen={defaultOpen}>
