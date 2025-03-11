@@ -2,6 +2,17 @@
 
 이 프로젝트는 [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)으로 생성된 [Next.js](https://nextjs.org) 애플리케이션입니다.
 
+## 🛠️ 기술 스택
+
+- pnpm
+- Next.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- redux
+- tanstack query
+- axios
+
 ## 🚀 개발 시작하기
 
 다음 명령어로 개발 서버를 실행해 봅시다...
@@ -18,7 +29,8 @@ pnpm dev
 
 ## 💎 주요 기능
 
-이 프로젝트는 [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)를 사용하여 [Geist](https://vercel.com/font) 폰트를 자동으로 최적화하고 로드합니다. Geist는 Vercel의 새로운 폰트 패밀리입니다.
+이 프로젝트는 [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)를 사용하여 [Geist](https://vercel.com/font) 폰트를 자동으로 최적화하고 로드합니다.
+Geist는 Vercel의 새로운 폰트 패밀리입니다.
 
 ## 📚 더 알아보기
 
@@ -28,169 +40,74 @@ Next.js에 대해 더 알아보려면 다음 리소스를 참고하세요:
 - [Next.js 배우기](https://nextjs.org/learn) - 인터랙티브 Next.js 튜토리얼을 경험해보세요.
 - [Next.js GitHub 저장소](https://github.com/vercel/next.js)에서 더 많은 정보를 확인할 수 있습니다.
 
-## 🛠️ 기술 스택
-
-- Next.js
-- TypeScript
-- Tailwind CSS
-- shadcn/ui
-- pnpm
-- redux
-
-## redux 관련 설정 설명
+## 🪣 redux 관련 설정 설명
 
 이 구조는 Redux Toolkit과 RTK Query의 공식 권장 사항을 따르는 "feature-first" 접근 방식으로, 관련 코드를 기능별로 그룹화하여 유지보수성을 높입니다.
 
 ```text
-lib/
-  ├── store.ts                  # Redux 스토어 설정
-  ├── features/                 # 기능별 Redux 로직
-  │   ├── counter/              # 카운터 기능 관련 Redux 파일
-  │   │   ├── counterApi.ts     # 카운터 관련 비동기 액션
-  │   │   └── counterSlice.ts   # 카운터 Slice
-  │   ├── quotes/               # 인용구 기능 관련 Redux 파일
-  │   │   └── quotesApiSlice.ts # RTK Query API Slice
-  │   └── [feature-name]/       # 기타 기능 ( counter 참고하여 필요할 때마다 추가하세요잉 )
-  │       ├── [feature]Api.ts   # API 관련 로직
-  │       └── [feature]Slice.ts # 각 기능의 Slice
-  └── hooks.ts                  # useDispatch, useSelector 타입 훅
-```
-
-### 주요 컴포넌트 및 기능 설명
-
-#### StoreProvider
-
-Redux 스토어를 전체 애플리케이션에 제공하는 컴포넌트입니다. 다음과 같은 역할을 합니다:
-
-- Next.js 앱 전체에 Redux 상태를 제공합니다
-- 앱 초기 렌더링 시 스토어 인스턴스를 생성합니다
-- RTK Query의 자동 리페치(refetch) 기능을 설정합니다
-
-```tsx
-// app/providers/StoreProvider.tsx
-"use client";
-
-export const StoreProvider = ({ children }: Props) => {
-	// 스토어 생성 및 설정
-	return <Provider store={storeRef.current}>{children}</Provider>;
-};
-```
-
-#### Counter
-
-기본적인 Redux 상태 관리를 보여주는 예시
-
-- counterSlice를 통한 상태 정의 및 액션 생성
-- 증가, 감소 및 리셋 기능 구현
-- 페이지 이동 간 상태 유지 확인
-
-```tsx
-// components/counter/Counter.tsx에서 사용 예시
-"use client";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-	decrement,
-	increment,
-	reset,
-} from "@/lib/features/counter/counterSlice";
-
-export const Counter = () => {
-	const count = useAppSelector((state) => state.counter.value);
-	const dispatch = useAppDispatch();
-
-	// 상태 업데이트 로직
-};
-```
-
-#### Quotes 기능
-
-RTK Query를 활용한 비동기 데이터 요청 예제입니다:
-
-- quotesApiSlice를 통해 API 엔드포인트 정의
-- 자동 로딩, 오류 상태 처리
-- 데이터 캐싱 및 자동 refetch 기능
-
-```tsx
-// components/quotes/Quotes.tsx에서 사용 예시
-"use client";
-import { useGetQuotesQuery } from "@/lib/features/quotes/quotesApiSlice";
-
-export const Quotes = () => {
-	// 쿼리 훅을 사용하면 자동으로 데이터를 가져오고 쿼리 값을 반환합니다
-	const { data, isError, isLoading, isSuccess } =
-		useGetQuotesQuery(numberOfQuotes);
-
-	// 데이터 표시 로직
-};
-```
-
-#### Verify 페이지
-
-Redux 상태가 페이지 네비게이션 사이에서 유지되는지 확인하는 페이지입니다:
-
-- 카운터 상태가 다른 페이지로 이동 후에도 유지되는지 확인
-- Next.js의 App Router에서 Redux가 올바르게 작동하는지 검증
-
-```tsx
-// app/verify/page.tsx
-export default function VerifyPage() {
-	return (
-		<>
-			<h1>확인 페이지</h1>
-			<p>
-				이 페이지는 Redux 상태가 페이지 이동 사이에서도 유지되는지 확인하기 위한
-				페이지입니다.
-			</p>
-			{/* 여기서 카운터 컴포넌트를 사용하여 상태 유지 확인 */}
-		</>
-	);
-}
+src/
+  ├── lib/
+  │   ├── config/
+  │   │   ├── createAppSlice.ts     # Redux Thunk 관련 함수
+  │   │   ├── ssrSafeStorage.ts     # SSR 환경에서 redux-persist 원활한 사용을 위한 유틸 함수
+  │   │   └── store.ts              # Redux 스토어 설정
+  │   └── features/                 # 기능별 Redux 로직
+  │       ├── counter/              # 카운터 기능 관련 Redux 파일
+  │       │   ├── counterAPI.ts     # 카운터 관련 비동기 액션
+  │       │   └── counterSlice.ts   # 카운터 Slice
+  │       ├── quotes/               # 인용구 기능 관련 Redux 파일
+  │       │   └── quotesApiSlice.ts # RTK Query API Slice
+  │       └── [feature-name]/       # 기타 기능 ( counter 참고하여 필요할 때마다 추가하세요잉 )
+  │           ├── [feature]API.ts   # API 관련 로직
+  │           └── [feature]Slice.ts # 각 기능의 Slice
+  └── hooks/
+      └── useReduxStore.ts       # useDispatch, useSelector 타입 훅
 ```
 
 ## 📁 라우팅 구조 설명 예시
 
-### 🌐 일반 페이지 (routes)
+### 일반 페이지 (routes)
 
-/ → 홈페이지
-/about → 소개 페이지
-/products → 상품 목록
+/ → 홈페이지  
+/about → 소개 페이지  
+/products → 상품 목록  
 /products/[id] → 상품 상세
 
-### 🔐 인증 페이지 (auth)
+### 인증 페이지 (auth)
 
-/login → 로그인
-/register → 회원가입
-/forgot-password → 비밀번호 찾기
+/login → 로그인  
+/register → 회원가입  
+/forgot-password → 비밀번호 찾기  
 /reset-password → 비밀번호 재설정
 
-### ⚙️ 관리자 페이지 (admin)
+### 관리자 페이지 (admin)
 
-/admin → 관리자 대시보드
-/admin/users → 사용자 관리
-/admin/settings → 환경설정
+/admin → 관리자 대시보드  
+/admin/users → 사용자 관리  
+/admin/settings → 환경설정  
 /admin/products → 상품 관리
 
-### 📂 디렉토리 구조 예시
+### 디렉토리 구조 예시
 
 > **Note**: 괄호로 묶인 디렉토리명 `(routes)`, `(auth)`, `(admin)`은 코드 구성을 위한 것으로, 실제 URL에는 포함되지 않습니다. 각 페이지는 `page.tsx` 파일로 구현되며, 동적 라우팅은 `[paramName]` 형식을 사용합니다.
 
 ```text
 src/app/
-├── (routes)/  # 일반 페이지
-│   ├── page.tsx  # 홈페이지
+├── (routes)/            # 일반
+│   ├── page.tsx         # 홈페이지
 │   └── products/
-│       ├── page.tsx # 상품 목록
+│       ├── page.tsx     # 상품 목록 페이지
 │       └── [id]/
-│           └── page.tsx # 상품 상세
-├── (auth)/ # 인증 관련
+│           └── page.tsx # 상품 상세 페이지
+├── (auth)/              # 인증 관련
 │   ├── login/
-│   │   └── page.tsx
+│   │   └── page.tsx     # 로그인 페이지
 │   └── register/
-│       └── page.tsx
-└── (admin)/ # 관리자 페이지
-    ├── page.tsx
+│       └── page.tsx     # 회원가입 페이지
+└── (admin)/             # 관리자 관련
+    ├── page.tsx         # 관리자 메인 페이지
     └── users/
-        └── page.tsx
+        └── page.tsx     # 관리자 사용자 관리 페이지
 ```
 
 실제 접근 가능한 URL은:
@@ -205,7 +122,7 @@ src/app/
 /admin/users       -> 관리자 사용자 관리 페이지
 ```
 
-## Next.js 라우트 핸들러 (Route Handlers)
+## 🚥 Next.js 라우트 핸들러 (Route Handlers)
 
 ### 라우트 핸들러란?
 
@@ -256,44 +173,7 @@ export async function GET() {
 }
 ```
 
-### 🔄 캐싱 및 재검증
-
-기본적으로 Response 객체를 반환하는 라우트 핸들러는 캐시됩니다. 이를 제어하는 방법은 아래와 같이 여러 가지가 있습니다.
-
-#### 캐시 활성화하기
-
-```typescript
-// app/items/route.ts
-export const dynamic = "force-static";
-
-export async function GET() {
-	const res = await fetch("https://data.mongodb-api.com/...", {
-		headers: {
-			"Content-Type": "application/json",
-			"API-Key": process.env.DATA_API_KEY,
-		},
-	});
-	const data = await res.json();
-
-	return Response.json({ data });
-}
-```
-
-#### 재검증 시간 설정하기
-
-```typescript
-// app/api/route.ts
-export const revalidate = 60; // 60초마다 재검증
-
-export async function GET() {
-	const data = await fetch("https://api.vercel.app/blog");
-	const posts = await data.json();
-
-	return Response.json(posts);
-}
-```
-
-### 🍪 쿠키 처리하기
+### 쿠키 처리하기
 
 쿠키를 읽거나 설정하려면 next/headers에서 제공하는 cookies 함수를 사용할 수 있습니다.
 
@@ -324,7 +204,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-### 📋 헤더 처리하기
+### 헤더 처리하기
 
 헤더를 읽기 위해 next/headers에서 제공하는 headers 함수를 사용할 수 있습니다.
 
@@ -355,7 +235,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-### 🔄 리다이렉트
+### 리다이렉트
 
 next/navigation의 redirect 함수를 사용하여 다른 URL로 리다이렉트할 수 있어습니다.
 
@@ -368,7 +248,7 @@ export async function GET(request: Request) {
 }
 ```
 
-### 🔄 동적 라우트 세그먼트
+### 동적 라우트 세그먼트
 
 동적 데이터를 기반으로 요청 핸들러를 생성하기 위해 동적 세그먼트를 사용할 수 있습니다.
 
@@ -389,7 +269,7 @@ export async function GET(
 | app/items/[slug]/route.js | /items/b | Promise<{ slug: 'b' }> |
 | app/items/[slug]/route.js | /items/c | Promise<{ slug: 'c' }> |
 
-### 🔍 URL 쿼리 파라미터
+### URL 쿼리 파라미터
 
 NextRequest 인스턴스를 사용하면 쿼리 파라미터를 쉽게 처리할 수 있습니다.
 
@@ -406,7 +286,10 @@ export function GET(request: NextRequest) {
 }
 ```
 
-### 🌊 스트리밍
+### 스트리밍
+
+스트리밍은 경로를 더 작은 "chunks"로 나누고 준비가 되면 서버에서 클라이언트로 점진적으로 스트리밍할 수 있는 데이터 전송 기술입니다.  
+스트리밍하면 느린 데이터 요청이 전체 페이지를 차단하는 것을 방지할 수 있습니다. 이를 통해 사용자는 UI가 사용자에게 표시되기 전에 모든 데이터가 로드될 때까지 기다리지 않고 페이지의 일부를 보고 상호 작용할 수 있습니다.
 
 ```typescript
 // app/api/chat/route.ts
@@ -467,7 +350,7 @@ export async function GET() {
 }
 ```
 
-### 📝 요청 본문 처리하기
+### 요청 본문 처리하기
 
 표준 웹 API 메서드를 사용하여 요청 본문을 읽을 수 있습니다.
 
@@ -495,7 +378,7 @@ export async function POST(request: Request) {
 
 > 💡 FormData의 모든 데이터는 문자열이므로, 다른 형식(예: 숫자)으로 데이터를 가져오려면 zod-form-data 같은 라이브러리를 사용하는 것이 좋습니다...
 
-### 🌐 CORS 설정하기
+### CORS 설정하기
 
 특정 라우트 핸들러에 CORS 헤더를 설정할 수 있습니다.......
 
@@ -513,11 +396,11 @@ export async function GET(request: Request) {
 }
 ```
 
-> 참고: 여러 라우트 핸들러에 CORS 헤더를 추가하려면 미들웨어나 next.config.js 파일을 사용할 수 있습니다....
+> 참고: 여러 라우트 핸들러에 CORS 헤더를 추가하려면 미들웨어나 next.config.ts|js 파일을 사용할 수 있습니다
 
-### 🪝 웹훅 처리하기
+### 웹훅 처리하기
 
-서드파티 서비스의 웹훅을 받기 위해 라우트 핸들러를 사용할 수 있습니다...
+서드파티 서비스의 웹훅을 받기 위해 라우트 핸들러를 사용할 수 있습니다
 
 ```typescript
 // app/api/route.ts
@@ -539,7 +422,7 @@ export async function POST(request: Request) {
 
 Pages Router의 API Routes와 달리 추가 설정 없이 바로 사용 가능합니다.
 
-### 📄 UI가 아닌 응답
+### UI가 아닌 응답
 
 UI가 아닌 콘텐츠를 반환하기 위해 라우트 핸들러를 사용할 수 있습니다. (sitemap.xml, robots.txt, 앱 아이콘, 오픈 그래프 이미지는 모두 기본 지원)
 
@@ -564,7 +447,7 @@ export async function GET() {
 }
 ```
 
-### ⚙️ 세그먼트 설정 옵션
+### 세그먼트 설정 옵션
 
 라우트 핸들러는 페이지와 레이아웃과 동일한 라우트 세그먼트 설정을 사용합니다
 
@@ -580,7 +463,57 @@ export const preferredRegion = "auto";
 
 자세한 내용은 [API 참조](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#api-reference)를 확인해 주세요..
 
-## Next.js 라우트 핸들러를 활용하여 백엔드 프록시 아키텍처 구현하기
+## 🤷‍♂️ Next.js에서 tanstack-query가 필요할까요?
+
+Next.js의 App Router와 React Server Components(RSC)의 등장으로 데이터 페칭에 대한 접근 방식이 크게 변화하였습니다. 이는 tanstack-query(이전의 react-query)의 필요성에 대한 질문을 불러일으킵니다.
+
+### Next.js의 내장 데이터 페칭 기능
+
+Next.js는 확장된 fetch 함수를 통해 다음과 같은 강력한 기능을 제공합니다
+
+- 자동 요청 중복 제거
+- 자동 캐싱 메커니즘
+- revalidate 기능을 통한 데이터 갱신
+  이러한 기능들은 tanstack-query가 제공하는 많은 기능과 유사합니다.
+
+```typescript
+// Next.js의 서버 컴포넌트에서 데이터 페칭 예시
+async function getData() {
+  const res = await fetch('https://api.example.com/...', { next: { revalidate: 10 } });
+  // 아래처럼 캐싱도 가능하다
+  // fetch(`https://...`, { cache: 'no-store' })
+  // fetch('https://...', { cache: 'force-cache' })
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  return res.json();
+}
+
+export default async function Page() {
+  const data = await getData();
+  return <main>{/* 데이터 렌더링 */}</main>;
+}
+```
+
+### 그럼에도 tanstack-query가 여전히 유용한 경우
+
+하지만 tanstack-query는 다음과 같은 상황에서 여전히 가치가 있습니다
+
+1. **클라이언트 컴포넌트에서의 데이터 페칭**: 서버 컴포넌트만으로 모든 데이터 요구사항을 처리할 수 없는 경우가 있습니다.
+2. **복잡한 상태 관리**: 로딩, 에러, 성공 상태를 세밀하게 제어해야 하는 경우
+3. **낙관적 업데이트**: 사용자 경험을 개선하기 위한 낙관적 UI 업데이트 기능
+4. **의존성 쿼리**: 이전 쿼리 결과에 따라 다음 쿼리가 달라지는 복잡한 데이터 패칭 시나리오
+5. **무한 스크롤/페이지네이션**: 이러한 UI 패턴을 구현할 때 tanstack-query의 유틸리티가 유용합니다.
+6. **강력한 캐시 무효화와 리페칭**: 특정 조건에 따른 세밀한 캐시 제어가 필요할 때
+
+### 결론
+
+Next.js의 내장 데이터 페칭 메커니즘만으로도 많은 사용 사례에 충분하지만, tanstack-query는 복잡한 클라이언트 사이드 데이터 상호작용이 필요한 애플리케이션에서 여전히 가치가 있습니다. 현재의 과도기적 시점에서 tanstack-query는 서버 컴포넌트가 아직 완벽하게 지원하지 못하는 사용 사례를 위한 통합 솔루션으로 역할을 할 수 있습니다.
+프로젝트의 요구사항과 복잡성에 따라 두 접근 방식을 적절히 조합하는 것이 최선의 전략일 수 있습니다. 간단한 데이터 페칭은 Next.js의 내장 기능을 활용하고, 복잡한 클라이언트 상호작용이 필요한 부분에서는 tanstack-query를 사용하는 하이브리드 접근법을 고려해보는 것이 적절해 보입니다..
+
+## 🏗 Next.js 라우트 핸들러를 활용하여 백엔드 프록시 아키텍처 구현하기
 
 Next.js 프레임워크를 사용하여 프로젝트를 만들면서...
 프론트 영역은 데이터 상태 관리의 역할을 하고 단순히 화면 구성 & 백엔드 요청의 역할만 하고
@@ -901,579 +834,6 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ success: true });
 	} catch (error) {
 		console.error("로그인 오류:", error);
-		return NextResponse.json(
-			{ error: "로그인 처리 중 오류가 발생했습니다." },
-			{ status: 500 },
-		);
-	}
-}
-```
-
-### Next.js의 Route Handlers와 함께 Axios + Tanstack Query 활용 예시
-
-이 아키텍처의 주요 이점
-
-1. 코드 분리: 프론트엔드와 백엔드 로직이 깔끔하게 분리됩니다.
-2. 보안 강화:
-
-- 실제 백엔드 서버 주소가 클라이언트에 노출되지 않음
-- 인증 토큰이 HttpOnly 쿠키로 안전하게 관리됨
-
-3. 개발 경험 향상:
-
-- TanStack Query의 캐싱 및 상태 관리 기능 활용
-- 로딩, 에러 상태 등을 쉽게 처리
-- 서버 상태와 클라이언트 상태 분리
-
-4. 효율성:
-
-- 불필요한 재요청 방지 (캐싱)
-- 데이터 변경 시 자동 재조회 (쿼리 무효화)
-
-5. 최적화:
-
-- 낙관적 업데이트 지원
-- 병렬 쿼리 및 의존성 쿼리 지원
-  이 구조는 Next.js 애플리케이션에서 Spring Boot 백엔드와 효율적으로 통신하며, 프론트엔드에서는 TanStack Query의 강력한 기능을 활용하여 데이터 요청을 관리할 수 있습니다.
-
-#### 1. 기본 구조 설정
-
-##### 백엔드 API 클라이언트 설정
-
-먼저 서버 사이드에서 Spring Boot 백엔드와 통신할 Axios 인스턴스를 만듭니다
-
-```typescript
-// lib/server/api.ts
-import axios from "axios";
-
-// 서버 사이드에서만 사용되는 Axios 인스턴스
-const serverAPI = axios.create({
-	baseURL: process.env.API_BASE_URL || "http://localhost:8080/api",
-	timeout: 10000,
-	headers: {
-		"Content-Type": "application/json",
-	},
-});
-
-// 에러 처리 인터셉터 추가
-serverAPI.interceptors.response.use(
-	(response) => response,
-	(error) => {
-		console.error("서버 API 요청 오류:", error);
-		return Promise.reject(error);
-	},
-);
-
-export default serverAPI;
-```
-
-##### 공통 Route Handler 구현
-
-모든 API 요청을 처리할 수 있는 동적 라우트 핸들러를 생성합니다.
-
-```typescript
-// app/api/[...path]/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import serverAPI from "@/lib/server/api";
-
-export async function GET(
-	request: NextRequest,
-	{ params }: { params: { path: string[] } },
-) {
-	const path = params.path.join("/");
-	const searchParams = request.nextUrl.searchParams.toString();
-	const queryString = searchParams ? `?${searchParams}` : "";
-
-	try {
-		const response = await serverAPI.get(`/${path}${queryString}`);
-		return NextResponse.json(response.data);
-	} catch (error) {
-		console.error(`GET /${path} 요청 오류:`, error);
-
-		// Axios 에러 응답 처리
-		if (error.response) {
-			return NextResponse.json(
-				{ error: error.response.data?.message || "서버 오류" },
-				{ status: error.response.status },
-			);
-		}
-
-		return NextResponse.json(
-			{ error: "서버 연결 오류가 발생했습니다." },
-			{ status: 500 },
-		);
-	}
-}
-
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: { path: string[] } },
-) {
-	const path = params.path.join("/");
-
-	try {
-		const body = await request.json();
-		const response = await serverAPI.post(`/${path}`, body);
-		return NextResponse.json(response.data);
-	} catch (error) {
-		console.error(`POST /${path} 요청 오류:`, error);
-
-		if (error.response) {
-			return NextResponse.json(
-				{ error: error.response.data?.message || "서버 오류" },
-				{ status: error.response.status },
-			);
-		}
-
-		return NextResponse.json(
-			{ error: "서버 연결 오류가 발생했습니다." },
-			{ status: 500 },
-		);
-	}
-}
-
-// PUT, PATCH, DELETE 등 다른 메서드도 유사하게 구현
-```
-
-#### 2. 클라이언트 구성
-
-##### TanStack Query 프로바이더 설정
-
-앱 루트에 QueryClientProvider를 설정합니다
-
-```typescript
-// app/provider.tsx
-'use client';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState } from 'react';
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000, // 1분
-        retry: 1,
-        refetchOnWindowFocus: false,
-      },
-    },
-  }));
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  );
-}
-```
-
-그리고 앱 루트에 적용합니다
-
-```typescript
-// app/layout.tsx
-import { Providers } from './providers';
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="ko">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
-}
-```
-
-##### 클라이언트 API 유틸리티
-
-클라이언트에서 사용할 Axios 인스턴스를 설정합니다
-
-```typescript
-// lib/client/api.ts
-"use client";
-
-import axios from "axios";
-
-// 클라이언트 사이드에서 사용할 Axios 인스턴스
-const clientAPI = axios.create({
-	baseURL: "/api", // Next.js 서버의 API 라우트로 요청
-	timeout: 10000,
-});
-
-// 응답 인터셉터 - 데이터 추출
-clientAPI.interceptors.response.use(
-	(response) => response.data,
-	(error) => {
-		// 오류 처리 및 변환
-		if (error.response) {
-			const customError = new Error(
-				error.response.data?.error || "서버 오류가 발생했습니다.",
-			);
-			customError.status = error.response.status;
-			customError.data = error.response.data;
-			return Promise.reject(customError);
-		}
-		return Promise.reject(error);
-	},
-);
-
-export default clientAPI;
-```
-
-##### TanStack Query 커스텀 훅
-
-데이터 조회와 변경을 위한 커스텀 훅을 생성합니다
-
-```typescript
-// lib/hooks/useApi.ts
-"use client";
-
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import clientAPI from "@/lib/client/api";
-
-// 데이터 조회 훅
-export function useApiQuery(endpoint: string, params?: object, options?: any) {
-	const queryKey = params ? [endpoint, params] : [endpoint];
-
-	return useQuery({
-		queryKey,
-		queryFn: () => clientAPI.get(endpoint, { params }),
-		...options,
-	});
-}
-
-// 단일 항목 조회 훅
-export function useApiQueryById(
-	endpoint: string,
-	id: string | number | null,
-	options?: any,
-) {
-	return useQuery({
-		queryKey: [endpoint, id],
-		queryFn: () => (id ? clientAPI.get(`${endpoint}/${id}`) : null),
-		enabled: !!id,
-		...options,
-	});
-}
-
-// 데이터 생성 훅
-export function useApiCreate(endpoint: string, options?: any) {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: (data: any) => clientAPI.post(endpoint, data),
-		onSuccess: () => {
-			// 성공 시 해당 엔드포인트 쿼리 무효화
-			queryClient.invalidateQueries({ queryKey: [endpoint] });
-		},
-		...options,
-	});
-}
-
-// 데이터 수정 훅
-export function useApiUpdate(endpoint: string, options?: any) {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: ({ id, data }: { id: string | number; data: any }) =>
-			clientAPI.put(`${endpoint}/${id}`, data),
-		onSuccess: (_, variables) => {
-			// 성공 시 해당 항목과 목록 쿼리 무효화
-			queryClient.invalidateQueries({ queryKey: [endpoint, variables.id] });
-			queryClient.invalidateQueries({ queryKey: [endpoint] });
-		},
-		...options,
-	});
-}
-
-// 데이터 삭제 훅
-export function useApiDelete(endpoint: string, options?: any) {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: (id: string | number) => clientAPI.delete(`${endpoint}/${id}`),
-		onSuccess: (_, id) => {
-			// 성공 시 해당 항목과 목록 쿼리 무효화
-			queryClient.invalidateQueries({ queryKey: [endpoint, id] });
-			queryClient.invalidateQueries({ queryKey: [endpoint] });
-		},
-		...options,
-	});
-}
-```
-
-#### 3. 실제 활용 예시
-
-##### 사용자 목록 페이지
-
-```tsx
-// app/users/page.tsx
-"use client";
-
-import { useApiQuery, useApiDelete } from "@/lib/hooks/useApi";
-import Link from "next/link";
-import { useState } from "react";
-
-export default function UsersPage() {
-	const [isDeleting, setIsDeleting] = useState(false);
-
-	const { data: users, isLoading, error } = useApiQuery("users");
-
-	const deleteUserMutation = useApiDelete("users", {
-		onMutate: () => setIsDeleting(true),
-		onSettled: () => setIsDeleting(false),
-	});
-
-	const handleDelete = (id: number) => {
-		if (window.confirm("정말 삭제하시겠습니까?")) {
-			deleteUserMutation.mutate(id);
-		}
-	};
-
-	if (isLoading) return <div>사용자 목록을 불러오는 중...</div>;
-	if (error) return <div>오류: {error.message}</div>;
-
-	return (
-		<div className="container mx-auto p-4">
-			<h1 className="mb-4 text-2xl font-bold">사용자 목록</h1>
-
-			<Link href="/users/new" className="btn btn-primary mb-4">
-				사용자 추가
-			</Link>
-
-			<div className="grid gap-4">
-				{users.map((user) => (
-					<div
-						key={user.id}
-						className="flex justify-between rounded border p-4"
-					>
-						<div>
-							<h2 className="font-bold">{user.name}</h2>
-							<p>{user.email}</p>
-						</div>
-						<div className="flex gap-2">
-							<Link href={`/users/${user.id}`} className="btn btn-sm">
-								상세보기
-							</Link>
-							<Link
-								href={`/users/${user.id}/edit`}
-								className="btn btn-sm btn-secondary"
-							>
-								수정
-							</Link>
-							<button
-								onClick={() => handleDelete(user.id)}
-								disabled={isDeleting}
-								className="btn btn-sm btn-danger"
-							>
-								삭제
-							</button>
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
-	);
-}
-```
-
-##### 사용자 상세 페이지
-
-```typescript
-// app/users/[id]/page.tsx
-'use client';
-
-import { useApiQueryById } from '@/lib/hooks/useApi';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-
-export default function UserDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const userId = params.id;
-
-  const {
-    data: user,
-    isLoading,
-    error
-  } = useApiQueryById('users', userId);
-
-  if (isLoading) return <div>사용자 정보를 불러오는 중...</div>;
-  if (error) return <div>오류: {error.message}</div>;
-  if (!user) return <div>사용자를 찾을 수 없습니다.</div>;
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">사용자 상세 정보</h1>
-
-      <div className="bg-white shadow rounded p-6">
-        <div className="mb-4">
-          <label className="font-bold">이름:</label>
-          <p>{user.name}</p>
-        </div>
-
-        <div className="mb-4">
-          <label className="font-bold">이메일:</label>
-          <p>{user.email}</p>
-        </div>
-
-        <div className="mb-4">
-          <label className="font-bold">전화번호:</label>
-          <p>{user.phone || '-'}</p>
-        </div>
-
-        <div className="flex gap-2 mt-6">
-          <Link href="/users" className="btn">
-            목록으로
-          </Link>
-          <Link href={`/users/${userId}/edit`} className="btn btn-secondary">
-            수정하기
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-##### 사용자 생성 폼
-
-```typescript
-// app/users/new/page.tsx
-'use client';
-
-import { useApiCreate } from '@/lib/hooks/useApi';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-
-export default function CreateUserPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-  });
-
-  const createUserMutation = useApiCreate('users', {
-    onSuccess: () => {
-      alert('사용자가 생성되었습니다.');
-      router.push('/users');
-    },
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    createUserMutation.mutate(formData);
-  };
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">사용자 추가</h1>
-
-      <form onSubmit={handleSubmit} className="bg-white shadow rounded p-6">
-        <div className="mb-4">
-          <label className="block mb-2">이름</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2">이메일</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2">전화번호</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="flex gap-2 mt-6">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="btn"
-          >
-            취소
-          </button>
-          <button
-            type="submit"
-            disabled={createUserMutation.isPending}
-            className="btn btn-primary"
-          >
-            {createUserMutation.isPending ? '처리 중...' : '저장'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
-```
-
-#### 4. 인증 처리 구현
-
-##### 인증 Route Handler
-
-```typescript
-// app/api/auth/login/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import serverAPI from "@/lib/server/api";
-import { cookies } from "next/headers";
-
-export async function POST(request: NextRequest) {
-	try {
-		const credentials = await request.json();
-
-		// Spring Boot 서버로 인증 요청
-		const response = await serverAPI.post("/auth/login", credentials);
-
-		// 토큰을 쿠키에 저장
-		const cookieStore = cookies();
-		cookieStore.set("auth-token", response.data.token, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			maxAge: 60 * 60 * 24 * 7, // 1주일
-			path: "/",
-		});
-
-		// 민감한 정보를 제외한 사용자 정보만 반환
-		const { password, ...userWithoutPassword } = response.data.user;
-
-		return NextResponse.json({
-			user: userWithoutPassword,
-			message: "로그인 성공",
-		});
-	} catch (error) {
-		console.error("로그인 오류:", error);
 
 		if (error.response) {
 			return NextResponse.json(
@@ -1530,70 +890,7 @@ const serverAPI = createServerAPI();
 export default serverAPI;
 ```
 
-#### 구조 예시
-
-```text
-project-root/
-├── .env              # 환경 변수 파일 (API_BASE_URL 등)
-├── package.json      # 프로젝트 의존성
-├── tsconfig.json     # TypeScript 설정
-├── next.config.js    # Next.js 설정
-├── app/              # Next.js App Router
-│   ├── layout.tsx    # 루트 레이아웃
-│   ├── page.tsx      # 홈페이지
-│   ├── providers.tsx # TanStack Query Provider
-│   ├── api/          # Route Handlers
-│   │   ├── [...path]/
-│   │   │   └── route.ts  # 범용 API 프록시 핸들러
-│   │   └── auth/
-│   │       ├── login/
-│   │       │   └── route.ts  # 로그인 핸들러
-│   │       └── logout/
-│   │           └── route.ts  # 로그아웃 핸들러
-│   ├── users/        # 사용자 페이지
-│   │   ├── page.tsx  # 사용자 목록
-│   │   ├── new/
-│   │   │   └── page.tsx  # 사용자 생성
-│   │   └── [id]/
-│   │       ├── page.tsx  # 사용자 상세
-│   │       └── edit/
-│   │           └── page.tsx  # 사용자 수정
-│   └── (auth)/       # 인증 관련 페이지
-│       ├── login/
-│       │   └── page.tsx  # 로그인 페이지
-│       └── register/
-│           └── page.tsx  # 회원가입 페이지
-├── lib/              # 유틸리티 및 비즈니스 로직
-│   ├── client/
-│   │   └── api.ts    # 클라이언트 Axios 인스턴스
-│   ├── server/
-│   │   └── api.ts    # 서버 Axios 인스턴스
-│   ├── hooks/
-│   │   ├── useApi.ts # API 관련 TanStack Query 훅
-│   │   └── useAuth.ts # 인증 관련 훅
-│   ├── types/
-│   │   ├── user.ts   # 사용자 관련 타입
-│   │   └── api.ts    # API 응답 관련 타입
-│   └── utils/
-│       ├── auth.ts   # 인증 유틸리티
-│       └── format.ts # 데이터 포맷 유틸리티
-├── components/       # 재사용 가능한 컴포넌트
-│   ├── ui/           # UI 컴포넌트
-│   │   ├── Button.tsx
-│   │   └── Input.tsx
-│   ├── layout/       # 레이아웃 컴포넌트
-│   │   ├── Header.tsx
-│   │   └── Footer.tsx
-│   └── forms/        # 폼 관련 컴포넌트
-│       ├── UserForm.tsx
-│       └── LoginForm.tsx
-├── public/           # 정적 파일
-│   ├── images/
-│   └── favicon.ico
-└── middleware.ts     # Next.js 미들웨어 (인증 체크 등)
-```
-
-## 스토리지 관련 유틸리티 훅
+## 📦 스토리지 관련 유틸리티 훅
 
 ### 쿠키 (Cookies)
 
