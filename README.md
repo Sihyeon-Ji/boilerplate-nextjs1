@@ -1047,3 +1047,55 @@ console.log(searchTerm); // '검색어'
 
 모든 스토리지 관련 유틸리티는 보안을 강화하기 위해 암호화를 사용합니다. 민감한 데이터를 저장할 때 이러한 유틸리티를 사용하면 일반 텍스트 노출 위험을 줄일 수 있습니다.
 더 자세한 사용 예시는 /app/(routes)/example/storage/page.tsx를 참조하세요.
+
+## 🌟 Next.js Loading UI & Streaming
+
+Next.js >=15은 React Suspense를 활용한 로딩 UI와 스트리밍 기능을 제공합니다. 이 프로젝트에서도 사용자 경험을 향상시키기 위해 다음과 같은 방식으로 구현하였습니다.
+
+- 점진적 페이지 로딩: 전체 페이지가 준비될 때까지 기다리지 않고, 준비된 부분부터 사용자에게 표시합니다.
+- 스켈레톤 UI: 데이터가 로드되는 동안 컴포넌트의 형태를 미리 보여주는 스켈레톤을 표시합니다.
+- 컴포넌트별 독립적 로딩 상태: 각 컴포넌트는 개별적으로 로딩 상태를 가질 수 있어 페이지의 다른 부분이 차단되지 않습니다.
+
+### 사용방법
+
+1. Suspense와 fallback UI 사용하기
+
+```tsx
+import { Suspense } from "react";
+
+// 로딩 중에 표시할 Fallback 컴포넌트
+function ComponentFallback() {
+	return (
+		<div className="w-full space-y-3">
+			<Skeleton className="h-6 w-40" />
+			<Skeleton className="h-20 w-full rounded-md" />
+		</div>
+	);
+}
+
+// 컴포넌트에서 사용
+<Suspense fallback={<ComponentFallback />}>
+	<DataFetchingComponent />
+</Suspense>;
+```
+
+2. 개발 환경에서 로딩 상태 시뮬레이션 (테스트 해보기)
+
+```tsx
+// 비동기 컴포넌트로 래핑하여 로딩 시간 시뮬레이션
+<Suspense fallback={<ComponentFallback />}>
+	<AsyncComponent name="chart" delayMs={1000}>
+		<MyComponent />
+	</AsyncComponent>
+</Suspense>
+```
+
+3. loading.tsx 파일 사용하기
+   특정 라우트에 대한 로딩 UI를 제공하려면 해당 폴더에 loading.tsx 파일을 생성하세요. 이 파일은 해당 라우트가 로드되는 동안 자동으로 표시됩니다.
+
+### 최적화 팁
+
+- 우선순위 고려: 중요한 콘텐츠를 먼저 로드하고, 덜 중요한 콘텐츠는 나중에 로드되도록 설계하세요.
+- 스켈레톤 정교화: 실제 컴포넌트와 유사한 형태의 스켈레톤을 사용하면 더 자연스러운 전환 경험을 제공할 수 있습니다.
+- 적절한 시간 설정: 개발 환경에서는 AsyncComponent의 delayMs 값을 조정하여 다양한 네트워크 조건을 시뮬레이션해 볼 수 있습니다.
+  이 기능들을 활용하면 초기 페이지 로딩 시간을 줄이고, 사용자에게 더 반응성 높은 웹 애플리케이션을 제공할 수 있습니다.
