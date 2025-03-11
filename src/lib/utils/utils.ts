@@ -54,3 +54,12 @@ export const decrypt = (encrypted: string): string => {
 		return "";
 	}
 };
+
+/**
+ * NOTE - 지정된 시간(ms) 동안 지연시키는 프로미스를 반환합니다.
+ * @param ms 지연시킬 시간(ms)
+ * @returns 지연시킨 프로미스
+ */
+export function delay(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
