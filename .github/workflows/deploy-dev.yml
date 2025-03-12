@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.DEV_USER }}
+          envs: DIR
           script: |
             [ -d "$DIR" ] && echo "directory exists" || mkdir -p "$DIR"
 
