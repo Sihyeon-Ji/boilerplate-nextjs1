@@ -22,11 +22,6 @@ module.exports = {
 			node_args: "--max-old-space-size=2048", // 메모리 사용량 제한 증가
 			// 실행 환경 변수 설정
 			env_file: ".env",
-			// env: {
-			// 	NODE_ENV: "production",
-			// 	PORT: 4010,
-			// 	NEXT_PUBLIC_CRYPTO_KEY: "examplekey", // 암호화 키 명시적 설정
-			// },
 		},
 	],
 };

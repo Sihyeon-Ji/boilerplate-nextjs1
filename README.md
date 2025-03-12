@@ -1165,8 +1165,8 @@ server {
     }
 
 	# Next.js 정적 파일 처리
-	location ^~ /next/_next/ {
-		proxy_pass http://localhost:4010/next/_next/;
+	location ^~ /next/_next {
+		proxy_pass http://localhost:4010/next/_next;
 		proxy_cache_valid 200 302 60m;
 		proxy_cache_valid 404 1m;
 		expires 1y;
