@@ -1129,9 +1129,11 @@ mkdir -p ~/nextjs-app
 
 # Install dependencies and restart service step을 위해
 # 심볼릭 링크 걸어주기
+which node
+sudo ln -s /opt/nodejs/node/bin/node /usr/local/bin/node
 which pnpm
-which pm2
 sudo ln -s /opt/nodejs/node/bin/pnpm /usr/local/bin/pnpm
+which pm2
 sudo ln -s /opt/nodejs/node/bin/pm2 /usr/local/bin/pm2
 ```
 
@@ -1240,9 +1242,19 @@ jobs:
       SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
       HOST: ${{ secrets.DEV_HOST }}
       USER: ${{ secrets.DEV_USER }}
-      APP_DIR: ${{ secrets.DEV_NEXT_APP_DIR || '~/nextjs-app' }} # /home/ubuntu/nextjs-app
+      DIR: ${{ secrets.DEV_NEXT_APP_DIR }} # /home/ubuntu/디렉토리명
 
     steps:
+      - name: Checking directory in instance
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.DEV_SSH_KEY }}
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          envs: DIR
+          script: |
+            [ -d "$DIR" ] && echo "directory exists" || mkdir -p "$DIR"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -1251,7 +1263,7 @@ jobs:
         with:
           node-version: "22.1.0"
 
-      - name: Install pnpm
+      - name: Use pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 10.5.2
@@ -1270,41 +1282,41 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Build Next.js app
         run: |
+          pnpm install --no-frozen-lockfile
           cp .env.dev .env
           pnpm build
 
       - name: Prepare deployment
         run: |
-          # 필요한 파일만 포함
+          # 필요한 파일만 복사하기
           mkdir -p deployment
           cp -r .next deployment/
           cp -r public deployment/
           cp package.json pnpm-lock.yaml ecosystem.config.js deployment/
-          cp .env.dev deployment/
+          cp .env.dev deployment/.env
 
       - name: Setup SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo -e "Host server\n\tUser $USER\n\tHostname $HOST\n\tStrictHostKeyChecking no\n\tIdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
-
-      - name: Check and create directory on server
-        run: ssh server "mkdir -p $APP_DIR"
+          mkdir ~/.ssh
+          echo "$SSH_KEY" >> ~/.ssh/github-action
+          chmod 400 ~/.ssh/github-action
+          echo -e "Host github-actions\n\tUser "$USER"\n\tHostname "$HOST"\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
 
       - name: Deploy to server
         run: |
-          rsync -avz --delete deployment/ server:$APP_DIR/
+          rsync -avzr --delete deployment/ github-actions:"$DIR"/
 
-      - name: Install dependencies and restart PM2
-        run: |
-          ssh server "cd $APP_DIR && pnpm install && pm2 reload ecosystem.config.js --env development || pm2 start ecosystem.config.js --env development"
-
-      - name: Cleanup
-        run: rm -rf ~/.ssh/id_rsa
+      - name: Install dependencies and restart service
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.DEV_SSH_KEY }}
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          envs: DIR
+          script: |
+            cd "$DIR"
+            pnpm install --production
+            pm2 reload ecosystem.config.js --env development || pm2 start ecosystem.config.js --env development
 ```
