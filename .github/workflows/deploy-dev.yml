@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Next.js app
         run: |
-          pnpm install --production
+          pnpm install
           cp .env.dev .env
           pnpm build
 
