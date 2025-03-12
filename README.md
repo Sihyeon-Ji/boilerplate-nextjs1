@@ -1153,7 +1153,7 @@ server {
     server_name your-domain.com; # dev-seodalgo.kro.kr
 
     location ^~ /next {
-        proxy_pass http://localhost:4010;
+        proxy_pass http://localhost:4010/next;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -1166,7 +1166,7 @@ server {
 
 	# Next.js 정적 파일 처리
 	location ^~ /next/_next/ {
-		proxy_pass http://localhost:4010/_next/;
+		proxy_pass http://localhost:4010/next/_next/;
 		proxy_cache_valid 200 302 60m;
 		proxy_cache_valid 404 1m;
 		expires 1y;
@@ -1286,7 +1286,7 @@ jobs:
         run: |
           pnpm install --no-frozen-lockfile
           cp .env.dev .env
-          pnpm build
+          NODE_ENV=production pnpm build
 
       - name: Prepare deployment
         run: |
@@ -1318,5 +1318,5 @@ jobs:
           script: |
             cd "$DIR"
             pnpm install --production
-            pm2 reload ecosystem.config.js --env development || pm2 start ecosystem.config.js --env development
+            pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
 ```
