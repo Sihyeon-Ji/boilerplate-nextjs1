@@ -1126,6 +1126,13 @@ pm2 startup
 
 # 애플리케이션 디렉토리 생성
 mkdir -p ~/nextjs-app
+
+# Install dependencies and restart service step을 위해
+# 심볼릭 링크 걸어주기
+which pnpm
+which pm2
+sudo ln -s /opt/nodejs/node/bin/pnpm /usr/local/bin/pnpm
+sudo ln -s /opt/nodejs/node/bin/pm2 /usr/local/bin/pm2
 ```
 
 ### 2. Nginx 웹 서버 설정
