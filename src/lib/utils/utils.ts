@@ -1,7 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { NextRequest } from "next/server";
 import { twMerge } from "tailwind-merge";
-import CryptoJS from "crypto-js";
+// crypto-js 개별 모듈 직접 import
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
 
 //NOTE - tailwindcss & shadcn/ui 에서 사용하는 클래스 이름을 병합하는 헬퍼 함수
 export function cn(...inputs: ClassValue[]) {
@@ -22,16 +24,6 @@ export function getAuthHeaders(request: NextRequest) {
 export const encrypt = (value: string): string => {
 	if (!value) return "";
 
-	// CryptoJS 및 AES 객체 유효성 검사
-	if (
-		!CryptoJS ||
-		!CryptoJS.AES ||
-		typeof CryptoJS.AES.encrypt !== "function"
-	) {
-		console.error("CryptoJS.AES.encrypt is not available");
-		return value; // 암호화 실패 시 원본 반환
-	}
-
 	// 암호화 키 확인
 	const cryptoKey = process.env.NEXT_PUBLIC_CRYPTO_KEY;
 	if (!cryptoKey) {
@@ -42,7 +34,8 @@ export const encrypt = (value: string): string => {
 	}
 
 	try {
-		const encrypted = CryptoJS.AES.encrypt(value, cryptoKey).toString();
+		// 직접 AES 모듈 사용
+		const encrypted = AES.encrypt(value, cryptoKey).toString();
 		// Base64를 Base64url로 변환 (특수문자 제거)
 		return encrypted.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 	} catch (error) {
@@ -58,16 +51,6 @@ export const encrypt = (value: string): string => {
  */
 export const decrypt = (encrypted: string): string => {
 	if (!encrypted) return "";
-
-	// CryptoJS 및 AES 객체 유효성 검사
-	if (
-		!CryptoJS ||
-		!CryptoJS.AES ||
-		typeof CryptoJS.AES.decrypt !== "function"
-	) {
-		console.error("CryptoJS.AES.decrypt is not available");
-		return encrypted; // 복호화 실패 시 원본 반환
-	}
 
 	// 암호화 키 확인
 	const cryptoKey = process.env.NEXT_PUBLIC_CRYPTO_KEY;
@@ -86,8 +69,9 @@ export const decrypt = (encrypted: string): string => {
 		if (pad) {
 			base64 += "=".repeat(4 - pad);
 		}
-		const bytes = CryptoJS.AES.decrypt(base64, cryptoKey);
-		return bytes.toString(CryptoJS.enc.Utf8);
+		// 직접 AES 모듈 사용
+		const bytes = AES.decrypt(base64, cryptoKey);
+		return bytes.toString(Utf8);
 	} catch (error) {
 		console.error("복호화 중 오류 발생:", error);
 		return encrypted; // 복호화 실패 시 원본 반환

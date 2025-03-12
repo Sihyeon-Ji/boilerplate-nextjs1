@@ -18,15 +18,14 @@ module.exports = {
 			listen_timeout: 50000, // 앱 실행 신호까지 기다릴 최대 시간. ms 단위.
 			kill_timeout: 5000, // 새로운 프로세스 실행이 완료된 후 예전 프로세스를 교체하기까지 기다릴 시간
 			time: true, // pm2 log 에서 콘솔들의 입력 시간이 언제인지 확인 가능
+			// node 옵션
+			node_args: "--max-old-space-size=2048", // 메모리 사용량 제한 증가
 			// 실행 환경 변수 설정
-			env_file: ".env", // .env 파일 자동 로드
+			env_file: ".env",
 			// env: {
-			// 	NODE_ENV: "development",
-			// 	PORT: 4010,
-			// },
-			// env_production: {
 			// 	NODE_ENV: "production",
 			// 	PORT: 4010,
+			// 	NEXT_PUBLIC_CRYPTO_KEY: "examplekey", // 암호화 키 명시적 설정
 			// },
 		},
 	],
