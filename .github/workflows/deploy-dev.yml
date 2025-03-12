@@ -21,9 +21,8 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.DEV_USER }}
-          envs: DIR
           script: |
-            [ -d "$DIR" ] && echo "directory exists" || mkdir -p "$DIR"
+            [ -d "${{ env.DIR }}" ] && echo "directory exists" || mkdir -p "${{ env.DIR }}"
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,7 +55,7 @@ jobs:
         run: |
           pnpm install --no-frozen-lockfile
           cp .env.dev .env
-          pnpm build
+          NODE_ENV=production pnpm build
 
       - name: Prepare deployment
         run: |

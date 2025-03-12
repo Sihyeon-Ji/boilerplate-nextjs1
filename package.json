@@ -16,8 +16,8 @@
 		"not ie <= 10"
 	],
 	"scripts": {
-		"windows-open-browser": "start http://localhost:4010",
-		"mac-open-browser": "open http://localhost:4010",
+		"windows-open-browser": "start http://localhost:4010/next",
+		"mac-open-browser": "open http://localhost:4010/next",
 		"dev": "pnpm install && next dev --turbopack --port 4010",
 		"dev:win": "pnpm install && npm run windows-open-browser && next dev --turbopack --port 4010",
 		"dev:mac": "pnpm install && npm run mac-open-browser && next dev --turbopack --port 4010",
