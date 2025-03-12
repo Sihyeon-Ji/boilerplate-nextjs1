@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Next.js app
         run: |
-          pnpm install
+          pnpm install --production --no-frozen-lockfile
           cp .env.dev .env
           pnpm build
 
@@ -84,6 +84,7 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.DEV_USER }}
+          envs: DIR
           script: |
             cd "$DIR"
             pnpm install --production
