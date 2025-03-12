@@ -1212,7 +1212,7 @@ module.exports = {
 
 ### 4. 환경 변수 설정
 
-.env.dev 파일..
+.env.dev 파일 등..
 
 > 브라우저에서 사용할 변수는 NEXT_PUBLIC\_ 접두사 사용해야 함을 주의
 
