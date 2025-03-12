@@ -6,6 +6,7 @@ module.exports = {
 			script: "node_modules/next/dist/bin/next", // 실행할 스크립트
 			// script: './server/index.js',
 			args: "start --port 4010", // 실행할 스크립트 인수
+			// cwd: "/home/ubuntu/nextjs-app",
 			instances: "max", // 동시에 실행할 인스턴스 수 (이 경우, 서버의 코어 개수만큼)
 			exec_mode: "cluster",
 			autorestart: true, // 프로세스가 비정상적으로 종료될 때 자동으로 다시 시작
