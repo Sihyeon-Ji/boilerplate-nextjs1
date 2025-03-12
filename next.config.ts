@@ -1,8 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	// basePath: process.env.NODE_ENV === "development" ? undefined : "/next",
-	// assetPrefix: process.env.NODE_ENV === "development" ? undefined : "/next/",
 	reactStrictMode: true,
 	experimental: {
 		// RSC (React Server Components) 스트리밍을 최적화

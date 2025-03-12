@@ -1148,13 +1148,12 @@ sudo apt-get install -y nginx
 ```text
 # /etc/nginx/sites-available/default
 server {
-	listen 80;
-	listen [::]:80;
-    server_name your-domain.com; # dev-seodalgo.kro.kr
+	listen 80 default_server;
+	listen [::]:80 default_server;
+    server_name _;
 
-    location ^~ /next {
-        proxy_pass http://localhost:4010/next;
-        proxy_http_version 1.1;
+	location / {
+		proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
@@ -1162,17 +1161,37 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-	# Next.js 정적 파일 처리
-	location ^~ /next/_next {
-		proxy_pass http://localhost:4010/next/_next;
-		proxy_cache_valid 200 302 60m;
-		proxy_cache_valid 404 1m;
-		expires 1y;
-		add_header Cache-Control "public, max-age=31536000, immutable";
 	}
+    # 정적 파일 처리
+    location /_next/static/ {
+        alias /home/ubuntu/nextjs-app/.next/static/;
+        expires 7d;
+        access_log off;
+    }
+    location /public/ {
+        alias /home/ubuntu/nextjs-app/public/;
+        expires 7d;
+        access_log off;
+    }
 }
+# http://dev-seodalgo.kro.kr/next 이런 식의 처리를 기대했었는데, 잘 되질 않았다.
+#server {
+#	listen 80;
+#	listen [::]:80;
+#    server_name dev-seodalgo.kro.kr;
+
+#    location ^~ /next {
+#        proxy_pass http://localhost:4010/next;
+#        proxy_http_version 1.1;
+#        proxy_set_header Upgrade $http_upgrade;
+#        proxy_set_header Connection 'upgrade';
+#        proxy_set_header Host $host;
+#        proxy_cache_bypass $http_upgrade;
+#        proxy_set_header X-Real-IP $remote_addr;
+#        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#        proxy_set_header X-Forwarded-Proto $scheme;
+#    }
+#}
 ```
 
 ```bash
@@ -1189,7 +1208,7 @@ sudo ufw allow 'Nginx Full'
 ### 3. PM2 설정
 
 ```javascript
-// PM2 설정 파일
+// PM2 설정 파일 (ecosystem.config.js)
 module.exports = {
 	apps: [
 		{
@@ -1200,20 +1219,14 @@ module.exports = {
 			exec_mode: "cluster",
 			autorestart: true, // 프로세스가 비정상적으로 종료될 때 자동으로 다시 시작
 			watch: false, // 파일 변경 감지
+			watch_delay: 2000,
 			max_memory_restart: "1G", // 메모리 임계값을 설정하여 재시작
 			wait_ready: true, // Node.js 앱으로부터 앱이 실행되었다는 신호를 직접 받겠다는 의미
 			listen_timeout: 50000, // 앱 실행 신호까지 기다릴 최대 시간. ms 단위.
 			kill_timeout: 5000, // 새로운 프로세스 실행이 완료된 후 예전 프로세스를 교체하기까지 기다릴 시간
 			time: true, // pm2 log 에서 콘솔들의 입력 시간이 언제인지 확인 가능
-			// 실행 환경 변수 설정
-			env: {
-				NODE_ENV: "development",
-				PORT: 4010,
-			},
-			env_production: {
-				NODE_ENV: "production",
-				PORT: 4010,
-			},
+			node_args: "--max-old-space-size=2048", // 메모리 사용량 제한 증가
+			env_file: ".env", // 실행 환경 변수 설정
 		},
 	],
 };
@@ -1320,3 +1333,7 @@ jobs:
             pnpm install --production
             pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
 ```
+
+### 6. url 접속
+
+http://3.38.227.201/
