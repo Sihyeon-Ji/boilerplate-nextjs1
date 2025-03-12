@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Next.js app
         run: |
-          pnpm install --production --no-frozen-lockfile
+          pnpm install --no-frozen-lockfile
           cp .env.dev .env
           pnpm build
 
