@@ -87,5 +87,5 @@ jobs:
           envs: DIR
           script: |
             cd "$DIR"
-            pnpm install
+            pnpm install --production
             pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js

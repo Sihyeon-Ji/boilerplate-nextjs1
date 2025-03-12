@@ -21,12 +21,34 @@ export function getAuthHeaders(request: NextRequest) {
  */
 export const encrypt = (value: string): string => {
 	if (!value) return "";
-	const encrypted = CryptoJS.AES.encrypt(
-		value,
-		process.env.NEXT_PUBLIC_CRYPTO_KEY || "",
-	).toString();
-	// Base64를 Base64url로 변환 (특수문자 제거)
-	return encrypted.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+
+	// CryptoJS 및 AES 객체 유효성 검사
+	if (
+		!CryptoJS ||
+		!CryptoJS.AES ||
+		typeof CryptoJS.AES.encrypt !== "function"
+	) {
+		console.error("CryptoJS.AES.encrypt is not available");
+		return value; // 암호화 실패 시 원본 반환
+	}
+
+	// 암호화 키 확인
+	const cryptoKey = process.env.NEXT_PUBLIC_CRYPTO_KEY;
+	if (!cryptoKey) {
+		console.error(
+			"암호화 키가 설정되지 않았습니다. NEXT_PUBLIC_CRYPTO_KEY 환경변수를 확인하세요.",
+		);
+		return value; // 키 없을 때는 원본 반환
+	}
+
+	try {
+		const encrypted = CryptoJS.AES.encrypt(value, cryptoKey).toString();
+		// Base64를 Base64url로 변환 (특수문자 제거)
+		return encrypted.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+	} catch (error) {
+		console.error("암호화 중 오류 발생:", error);
+		return value; // 암호화 실패 시 원본 반환
+	}
 };
 
 /**
@@ -36,6 +58,26 @@ export const encrypt = (value: string): string => {
  */
 export const decrypt = (encrypted: string): string => {
 	if (!encrypted) return "";
+
+	// CryptoJS 및 AES 객체 유효성 검사
+	if (
+		!CryptoJS ||
+		!CryptoJS.AES ||
+		typeof CryptoJS.AES.decrypt !== "function"
+	) {
+		console.error("CryptoJS.AES.decrypt is not available");
+		return encrypted; // 복호화 실패 시 원본 반환
+	}
+
+	// 암호화 키 확인
+	const cryptoKey = process.env.NEXT_PUBLIC_CRYPTO_KEY;
+	if (!cryptoKey) {
+		console.error(
+			"암호화 키가 설정되지 않았습니다. NEXT_PUBLIC_CRYPTO_KEY 환경변수를 확인하세요.",
+		);
+		return encrypted; // 키 없을 때는 원본 반환
+	}
+
 	try {
 		// Base64url을 표준 Base64로 복원
 		let base64 = encrypted.replace(/-/g, "+").replace(/_/g, "/");
@@ -44,14 +86,11 @@ export const decrypt = (encrypted: string): string => {
 		if (pad) {
 			base64 += "=".repeat(4 - pad);
 		}
-		const bytes = CryptoJS.AES.decrypt(
-			base64,
-			process.env.NEXT_PUBLIC_CRYPTO_KEY || "",
-		);
+		const bytes = CryptoJS.AES.decrypt(base64, cryptoKey);
 		return bytes.toString(CryptoJS.enc.Utf8);
 	} catch (error) {
 		console.error("복호화 중 오류 발생:", error);
-		return "";
+		return encrypted; // 복호화 실패 시 원본 반환
 	}
 };
 
