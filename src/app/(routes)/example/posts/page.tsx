@@ -3,6 +3,8 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import Posts from "./Posts";
 import { GET as getPostsHandler } from "@/app/api/example/post/route";
 
+export const dynamic = "force-dynamic";
+
 //NOTE - Axios, Tanstack Query, route handler를 이용하여 prefetch 구현한 예제
 export default async function PostsPage() {
 	console.log(

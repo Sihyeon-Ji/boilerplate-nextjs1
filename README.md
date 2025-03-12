@@ -1099,3 +1099,205 @@ function ComponentFallback() {
 - 스켈레톤 정교화: 실제 컴포넌트와 유사한 형태의 스켈레톤을 사용하면 더 자연스러운 전환 경험을 제공할 수 있습니다.
 - 적절한 시간 설정: 개발 환경에서는 AsyncComponent의 delayMs 값을 조정하여 다양한 네트워크 조건을 시뮬레이션해 볼 수 있습니다.
   이 기능들을 활용하면 초기 페이지 로딩 시간을 줄이고, 사용자에게 더 반응성 높은 웹 애플리케이션을 제공할 수 있습니다.
+
+## 📝 배포 전략
+
+### 1. 서버 초기 설정
+
+```bash
+# 서버 패키지 업데이트
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Node.js 설치 (22.x)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 필요한 툴 설치
+sudo apt-get install -y git rsync
+
+# pnpm 설치
+npm install -g pnpm
+
+# PM2 설치
+sudo npm install -g pm2
+
+# PM2 시작 시 자동 실행 설정
+pm2 startup
+
+# 애플리케이션 디렉토리 생성
+mkdir -p ~/nextjs-app
+```
+
+### 2. Nginx 웹 서버 설정
+
+```bash
+# Nginx 설치
+sudo apt-get update
+sudo apt-get install -y nginx
+```
+
+```text
+# /etc/nginx/sites-available/default
+server {
+	listen 80;
+	listen [::]:80;
+    server_name your-domain.com; # dev-seodalgo.kro.kr
+
+    location ^~ /next {
+        proxy_pass http://localhost:4010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+	# Next.js 정적 파일 처리
+	location ^~ /next/_next/static/ {
+		proxy_pass http://localhost:4010/_next/static/;
+		proxy_cache_valid 200 302 60m;
+		proxy_cache_valid 404 1m;
+		expires 1y;
+		add_header Cache-Control "public, max-age=31536000, immutable";
+	}
+}
+```
+
+```bash
+# 문법 검사
+sudo nginx -t
+
+# Nginx 재시작
+sudo systemctl restart nginx
+
+# 방화벽 설정 (선택사항)
+sudo ufw allow 'Nginx Full'
+```
+
+### 3. PM2 설정
+
+```javascript
+// PM2 설정 파일
+module.exports = {
+	apps: [
+		{
+			name: "nextjs-app", // 애플리케이션 이름
+			script: "node_modules/next/dist/bin/next", // 실행할 스크립트
+			args: "start --port 4010", // 실행할 스크립트 인수
+			instances: "max", // 동시에 실행할 인스턴스 수 (이 경우, 서버의 코어 개수만큼)
+			exec_mode: "cluster",
+			autorestart: true, // 프로세스가 비정상적으로 종료될 때 자동으로 다시 시작
+			watch: false, // 파일 변경 감지
+			max_memory_restart: "1G", // 메모리 임계값을 설정하여 재시작
+			wait_ready: true, // Node.js 앱으로부터 앱이 실행되었다는 신호를 직접 받겠다는 의미
+			listen_timeout: 50000, // 앱 실행 신호까지 기다릴 최대 시간. ms 단위.
+			kill_timeout: 5000, // 새로운 프로세스 실행이 완료된 후 예전 프로세스를 교체하기까지 기다릴 시간
+			time: true, // pm2 log 에서 콘솔들의 입력 시간이 언제인지 확인 가능
+			// 실행 환경 변수 설정
+			env: {
+				NODE_ENV: "development",
+				PORT: 4010,
+			},
+			env_production: {
+				NODE_ENV: "production",
+				PORT: 4010,
+			},
+		},
+	],
+};
+```
+
+### 4. 환경 변수 설정
+
+.env.dev 파일..
+
+> 브라우저에서 사용할 변수는 NEXT_PUBLIC\_ 접두사 사용해야 함을 주의
+
+### 5. Github Actions 워크플로우 설정
+
+```yaml
+name: deploy-dev
+
+on:
+  push:
+    branches:
+      - deploy-dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      HOST: ${{ secrets.DEV_HOST }}
+      USER: ${{ secrets.DEV_USER }}
+      APP_DIR: ${{ secrets.DEV_NEXT_APP_DIR || '~/nextjs-app' }} # /home/ubuntu/nextjs-app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.1.0"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.5.2
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Next.js app
+        run: |
+          cp .env.dev .env
+          pnpm build
+
+      - name: Prepare deployment
+        run: |
+          # 필요한 파일만 포함
+          mkdir -p deployment
+          cp -r .next deployment/
+          cp -r public deployment/
+          cp package.json pnpm-lock.yaml ecosystem.config.js deployment/
+          cp .env.dev deployment/
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo -e "Host server\n\tUser $USER\n\tHostname $HOST\n\tStrictHostKeyChecking no\n\tIdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
+
+      - name: Check and create directory on server
+        run: ssh server "mkdir -p $APP_DIR"
+
+      - name: Deploy to server
+        run: |
+          rsync -avz --delete deployment/ server:$APP_DIR/
+
+      - name: Install dependencies and restart PM2
+        run: |
+          ssh server "cd $APP_DIR && pnpm install && pm2 reload ecosystem.config.js --env development || pm2 start ecosystem.config.js --env development"
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh/id_rsa
+```

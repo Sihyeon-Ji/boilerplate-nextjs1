@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	basePath: "/next",
 	reactStrictMode: true,
 	experimental: {
 		// RSC (React Server Components) 스트리밍을 최적화

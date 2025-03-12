@@ -1,0 +1,81 @@
+name: deploy-dev
+
+on:
+  push:
+    branches:
+      - deploy-dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      HOST: ${{ secrets.DEV_HOST }}
+      USER: ${{ secrets.DEV_USER }}
+      APP_DIR: ${{ secrets.NEXT_APP_DIR || '~/nextjs-app' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.1.0"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.5.2
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Next.js app
+        run: |
+          cp .env.dev .env
+          pnpm build
+
+      - name: Prepare deployment
+        run: |
+          # 필요한 파일만 포함
+          mkdir -p deployment
+          cp -r .next deployment/
+          cp -r public deployment/
+          cp package.json pnpm-lock.yaml ecosystem.config.js deployment/
+          cp .env.dev deployment/.env
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo -e "Host server\n\tUser $USER\n\tHostname $HOST\n\tStrictHostKeyChecking no\n\tIdentityFile ~/.ssh/id_rsa" > ~/.ssh/config
+
+      - name: Check and create directory on server
+        run: ssh server "mkdir -p $APP_DIR"
+
+      - name: Deploy to server
+        run: |
+          rsync -avz --delete deployment/ server:$APP_DIR/
+
+      - name: Install dependencies and restart PM2
+        run: |
+          ssh server "cd $APP_DIR && pnpm install && pm2 reload ecosystem.config.js --env development || pm2 start ecosystem.config.js --env development"
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh/id_rsa
